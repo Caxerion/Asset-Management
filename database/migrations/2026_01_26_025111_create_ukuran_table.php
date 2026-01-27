@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('ukuran', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('nama_ukuran');
 
             $table->foreignId('created_by')
                   ->nullable()
