@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ukuran', function (Blueprint $table) {
+        if (!Schema::hasTable('ukuran')) {
+            Schema::create('ukuran', function (Blueprint $table) {
             $table->id();
             $table->string('nama_ukuran');
 
@@ -23,7 +24,8 @@ return new class extends Migration
                   ->nullOnDelete();
 
             $table->timestamps();
-        });
+            });
+        }
     }
 
     public function down(): void

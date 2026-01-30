@@ -8,22 +8,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('lantai', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_lantai');
+        if (!Schema::hasTable('lantai')) {
+            Schema::create('lantai', function (Blueprint $table) {
+                $table->id();
+                $table->string('nama_lantai');
 
-            $table->foreignId('created_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                $table->foreignId('created_by')
+                      ->nullable()
+                      ->constrained('users')
+                      ->nullOnDelete();
 
-            $table->foreignId('updated_by')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                $table->foreignId('updated_by')
+                      ->nullable()
+                      ->constrained('users')
+                      ->nullOnDelete();
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
