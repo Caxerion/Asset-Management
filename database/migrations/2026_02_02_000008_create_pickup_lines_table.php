@@ -29,3 +29,4 @@ return new class extends Migration {
         Schema::dropIfExists('pickup_lines');
     }
 };
+// pickup lines
