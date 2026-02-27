@@ -1,0 +1,38 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Detail Pengambilan Barang</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Pickup No: {{ $pickup->pickup_no }}</h5>
+            <p><strong>Nama Pengambil:</strong> {{ $pickup->user->name }} ({{ $pickup->user->email }})</p>
+            <p><strong>Tanggal Pengambilan:</strong> {{ $pickup->created_at->format('d M Y H:i') }}</p>
+            <p><strong>Lantai:</strong> {{ $pickup->floor->name }}</p>
+        </div>
+    </div>
+
+    <h3 class="mt-4">Daftar Barang</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nama Barang</th>
+                <th>Jumlah</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($pickup->items as $index => $item)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $item->product->name }}</td>
+                    <td>{{ $item->qty }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali</a>
+</div>
+@endsection
