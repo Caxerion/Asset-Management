@@ -27,12 +27,12 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Nama Pengambil Barang</th>
-                <th>Nama Barang</th>
-                <th>Tanggal Pengambilan</th>
-                <th>Untuk Lantai?</th>
-                <th>Lihat Detil</th>
+                <th style="vertical-align: middle;">#</th>
+                <th style="vertical-align: middle;">Nama Pengambil Barang</th>
+                <th style="vertical-align: middle;">Nama Barang</th>
+                <th style="vertical-align: middle;">Tanggal Pengambilan</th>
+                <th style="vertical-align: middle;">Untuk Lantai?</th>
+                <th style="vertical-align: middle;">Lihat Detil</th>
             </tr>
         </thead>
         <tbody>
