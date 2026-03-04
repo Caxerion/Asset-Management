@@ -9,6 +9,25 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function requestPengambilans()
+{
+    return $this->hasMany(RequestPengambilan::class);
+}
+
+public function lantaisAsPIC()
+{
+    return $this->hasMany(Lantai::class, 'pic_user_id');
+}
+
+public function createdItems()
+{
+    return $this->hasMany(Barang::class, 'created_by');
+}
+
+public function updatedItems()
+{
+    return $this->hasMany(Barang::class, 'updated_by');
+}
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -45,4 +64,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    
 }
