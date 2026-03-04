@@ -12,9 +12,7 @@ return new class extends Migration {
 
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
 
             // role (flexible, avoid enum lock-in)
             $table->string('role')->default('staff');
