@@ -8,9 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('satuan', function (Blueprint $table) {
+        Schema::create('detail_request_pengambilan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+
+            $table->foreignId('request_pengambilan_id')
+                  ->constrained('request_pengambilan')
+                  ->cascadeOnDelete();
+
+            $table->foreignId('barang_id')
+                  ->constrained('barang')
+                  ->restrictOnDelete();
+
+            $table->integer('qty');
+            $table->text('note')->nullable();
 
             $table->foreignId('created_by')
                   ->nullable()
@@ -28,6 +38,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('satuan');
+        Schema::dropIfExists('detail_request_pengambilan');
     }
 };

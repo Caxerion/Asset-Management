@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('barang', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_barang');
+            $table->string('nama');
 
             $table->foreignId('kategori_id')
                   ->constrained('kategori')

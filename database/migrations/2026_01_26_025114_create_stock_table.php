@@ -8,9 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('satuan', function (Blueprint $table) {
+        Schema::create('stock', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+
+            $table->foreignId('barang_id')
+                  ->constrained('barang')
+                  ->cascadeOnDelete();
+
+            $table->foreignId('request_pengambilan_id')
+                  ->nullable()
+                  ->constrained('request_pengambilan')
+                  ->nullOnDelete();
+
+            $table->integer('harga')->nullable();
+            $table->integer('qty');
 
             $table->foreignId('created_by')
                   ->nullable()
@@ -28,6 +39,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('satuan');
+        Schema::dropIfExists('stock');
     }
 };
