@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .table thead th {
+        position: relative;
+        border: none !important;
+    }
+    .table th:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 35%;
+        height: 30%;
+        width: 1px;
+        background-color: #dee2e6;
+    }
+</style>
 <div class="container">
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
@@ -30,6 +45,11 @@
                 @endif
             </form>
         </div>
+        <div>
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetStockModal">
+                <i class="fa fa-rotate-left"></i> Reset Semua Stock
+            </button>
+        </div>
     </div>
 
     {{-- Card with table --}}
@@ -42,9 +62,9 @@
                 <thead>
                     <tr>
                         <th style="width: 50px;">#</th>
-                        <th class="fs-6" style="width: 195px; text-align: left">KATEGORI BARANG</th>
-                        <th style="text-align: left">NAMA BARANG</th>
-                        <th style="width: 180px; text-align: left">UKURAN BARANG</th>
+                        <th class="fs-6" style="width: 195px; text-align: left;">KATEGORI BARANG</th>
+                        <th style="text-align: left;">NAMA BARANG</th>
+                        <th style="width: 180px; text-align: left;">UKURAN BARANG</th>
                         <th class="fs-6" style="width: 160px;">STOCK TERSEDIA SAAT INI</th>
                         <th style="width: 120px;">TAMBAH STOCK</th>
                     </tr>
@@ -87,14 +107,6 @@
                                 <form action="{{ route('stock.add', $product->id) }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
-                                        <label class="form-label">Lantai</label>
-                                        <select name="floor_id" class="form-control" required>
-                                            @foreach($floors as $floor)
-                                                <option value="{{ $floor->id }}">{{ $floor->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
                                         <label class="form-label">Jumlah Tambahan</label>
                                         <input type="number" name="qty" class="form-control" required>
                                     </div>
@@ -120,6 +132,29 @@
     {{-- Pagination --}}
     <div class="mt-3">
         {{ $products->links() }}
+    </div>
+
+    {{-- Reset Stock Confirmation Modal --}}
+    <div class="modal fade" id="resetStockModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Semua Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin mereset semua stock menjadi 0?</p>
+                    <p class="text-danger">Tindakan ini tidak dapat dibatalkan!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <form action="{{ route('stock-balances.resetAll') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Ya, Reset Semua</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

@@ -40,4 +40,13 @@ class StockBalanceController extends Controller
         $stockBalance->delete();
         return response()->noContent();
     }
+
+    /**
+     * Reset all stock quantities to 0
+     */
+    public function resetAll()
+    {
+        StockBalance::query()->update(['qty_on_hand' => 0]);
+        return response()->json(['message' => 'All stock has been reset to 0']);
+    }
 }

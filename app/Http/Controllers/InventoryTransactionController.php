@@ -17,9 +17,9 @@ class InventoryTransactionController extends Controller
         $transaction = InventoryTransaction::create($request->validate([
             'product_id' => 'required|exists:products,id',
             'floor_id' => 'required|exists:floors,id',
-            'transaction_type' => 'required|string',
-            'qty' => 'required|numeric',
-            'transaction_date' => 'required|date'
+            'trans_type' => 'required|string',
+            'quantity' => 'required|numeric',
+            'trans_at' => 'required|date'
         ]));
         return response()->json($transaction, 201);
     }
@@ -32,9 +32,9 @@ class InventoryTransactionController extends Controller
     public function update(Request $request, InventoryTransaction $inventoryTransaction)
     {
         $inventoryTransaction->update($request->validate([
-            'transaction_type' => 'required|string',
-            'qty' => 'required|numeric',
-            'transaction_date' => 'required|date'
+            'trans_type' => 'required|string',
+            'quantity' => 'required|numeric',
+            'trans_at' => 'required|date'
         ]));
         return $inventoryTransaction;
     }

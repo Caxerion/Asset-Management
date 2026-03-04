@@ -15,11 +15,11 @@
                 <span class="navbar-brand mb-0 h1">Stock Barang & Obat</span>
             </div>
             <div class="d-flex align-items-center">
-                <a class="nav-link text-white" href="#">🔍</a>
-                <a class="nav-link text-white" href="#">🌐</a>
-                <a class="nav-link text-white" href="#">⚙️</a>
-                <a class="nav-link text-white" href="#">🔔</a>
-                <a class="nav-link text-white" href="#">👤</a>
+                <span class="text-white me-3">👤 {{ auth()->user()->name ?? 'Guest' }}</span>
+                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                </form>
             </div>
         </div>
     </nav>

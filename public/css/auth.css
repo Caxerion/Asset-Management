@@ -1,0 +1,45 @@
+body {
+    background: #f2f4f7;
+    font-family: 'Roboto', sans-serif;
+}
+
+.login-box {
+    margin-top: 80px;
+    padding: 56px 48px;   /* lebih tinggi ke bawah */
+    border-radius: 16px;
+    min-height: 520px;    /* bikin box lebih “panjang” */
+}
+
+
+/* Card */
+.login-box {
+    margin-top: 80px;
+    padding: 40px;
+    border-radius: 12px;
+}
+
+/* Button */
+.btn-login {
+    background-color: #0d3b66;
+    border-radius: 15px;
+    height: 48px;
+    line-height: 48px;
+    width: 100%;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.btn-login:hover {
+    background-color: #092c4d;
+}
+
+/* Text helper */
+.login-title {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.login-subtitle {
+    color: #777;
+    font-size: 14px;
+}

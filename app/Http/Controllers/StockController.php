@@ -37,14 +37,18 @@ class StockController extends Controller
     {
         $request->validate([
             'qty' => 'required|integer|min:1',
-            'floor_id' => 'required|exists:floors,id',
         ]);
 
         $product = Product::findOrFail($productId);
 
+        // Get Mezanine floor ID as default (or first floor)
+        $mezanineFloor = \App\Models\Floor::where('name', 'Mezanine')->first();
+        $floorId = $request->floor_id ?: ($mezanineFloor ? $mezanineFloor->id : null);
+
+        // Add stock with specific floor (or default to Mezanine)
         $stockBalance = StockBalance::firstOrNew([
             'product_id' => $product->id,
-            'floor_id' => $request->floor_id
+            'floor_id' => $floorId,
         ]);
         $stockBalance->qty_on_hand = ($stockBalance->qty_on_hand ?? 0) + $request->qty;
         $stockBalance->save();
@@ -69,14 +73,14 @@ class StockController extends Controller
     {
         $request->validate([
             'qty' => 'required|integer|min:1',
-            'floor_id' => 'required|exists:floors,id',
         ]);
 
         $product = Product::findOrFail($id);
 
+        // Add stock without specific floor (global stock)
         $stockBalance = StockBalance::firstOrNew([
             'product_id' => $product->id,
-            'floor_id' => $request->floor_id
+            'floor_id' => null,
         ]);
         $stockBalance->qty_on_hand = ($stockBalance->qty_on_hand ?? 0) + $request->qty;
         $stockBalance->save();

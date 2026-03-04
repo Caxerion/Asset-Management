@@ -18,6 +18,7 @@
         <thead>
             <tr>
                 <th>#</th>
+                <th>Kode Barang</th>
                 <th>Nama Barang</th>
                 <th>Jumlah</th>
             </tr>
@@ -25,7 +26,8 @@
         <tbody>
             @foreach($pickup->items as $index => $item)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td>#{{ $index + 1 }}</td>
+                    <td>{{ $item->product->sku ?? '-' }}</td>
                     <td>{{ $item->product->name }}</td>
                     <td>{{ $item->qty }}</td>
                 </tr>
@@ -33,6 +35,12 @@
         </tbody>
     </table>
 
-    <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali</a>
+    <a href="{{ route('persediaan.index') }}" class="btn btn-secondary">Kembali</a>
+    
+    <form action="{{ route('persediaan.destroy', $pickup->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pengambilan barang ini? Stock akan dikembalikan.')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">Hapus</button>
+    </form>
 </div>
 @endsection
