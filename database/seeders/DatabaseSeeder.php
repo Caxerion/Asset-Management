@@ -33,5 +33,14 @@ class DatabaseSeeder extends Seeder
             BarangSeeder::class,
             LantaiSeeder::class,
         ]);
+
+        $this->call([
+            UserSeeder::class,
+            KategoriSeeder::class,
+            SatuanSeeder::class,
+            UkuranSeeder::class,
+            BarangSeeder::class,
+            LantaiSeeder::class,
+        ]);
     }
 }
