@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td style="border-left: 0; border-right: 0;">
                                 @php
                                     $colors = ['primary','success','warning','danger','info'];
-                                    $items = $pickup->items;
+                                    $items = collect($pickup->items ?? []);
                                     $maxDisplay = 5;
                                     $displayItems = $items->take($maxDisplay);
                                     $remainingCount = $items->count() - $maxDisplay;
@@ -373,7 +373,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                         </span>
                                     @endforeach
                                     @if($remainingCount > 0)
-                                        <a href="{{ route('persediaan.show', $pickup->id) }}" class="product-more-indicator" title="Lihat semua {{ $items->count }} barang">
+                                      <a href="{{ route('persediaan.show', $pickup->id) }}" 
+   class="product-more-indicator" 
+   title="Lihat semua {{ $items->count() }} barang">
                                             +{{ $remainingCount }} lainnya...
                                         </a>
                                     @endif
@@ -446,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="bg-primary text-white p-3 rounded" style="min-height: 100%;">
                         <h6 class="mb-0 fw-bold">INFORMASI</h6>
                         <p class="mb-0">Tanggal: {{ now()->translatedFormat('l, d M Y H:i') }}</p>
-                        <p class="mb-0">No Catatan: #{{ $pickup->id ?? 'XXXX' }}</p>
+                        <p class="mb-0">No Catatan: #{{ isset($pickup) ? $pickup->id : 'otomatis' }}</p>
                     </div>
                 </div>
                 <div class="col-md-9">

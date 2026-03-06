@@ -50,14 +50,15 @@ class UserController extends Controller
             'role' => 'required|in:admin,peminjam,read,test',
         ]);
 
-        // Create user
+        // Create user with role column
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
         ]);
 
-        // Assign role
+        // Try to assign role via many-to-many (if role exists in roles table)
         $role = Role::where('name', $validated['role'])->first();
         if ($role) {
             $user->roles()->attach($role->id);

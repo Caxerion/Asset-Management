@@ -41,7 +41,11 @@ class PickupSeeder extends Seeder
             ]);
 
             // Create 1-3 PickupLines (items)
-            $numItems = rand(1, min(3, $products->count()));
+            $productCount = $products->count();
+            if ($productCount === 0) {
+                continue;
+            }
+            $numItems = rand(1, min(3, $productCount));
             $randomProducts = $products->random($numItems);
 
             foreach ($randomProducts as $product) {

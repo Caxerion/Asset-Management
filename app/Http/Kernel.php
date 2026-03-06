@@ -33,10 +33,6 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-
-         'role' => [
-            \App\Http\Middleware\CheckRole::class,
-        ],
     ];
 
     /**
@@ -44,7 +40,6 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
-        'role' => \App\Http\Middleware\RoleMiddleware::class, // middleware custom kamu
-        // tambahkan middleware lain sesuai kebutuhan
+        'role' => \App\Http\Middleware\CheckRole::class,
     ];
 }

@@ -41,6 +41,7 @@ public function updatedItems()
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -79,7 +80,17 @@ public function updatedItems()
      */
     public function hasRole(string $role): bool
     {
-        return $this->roles()->where('name', $role)->exists();
+        // First check the roles table (many-to-many relationship)
+        if ($this->roles()->where('name', $role)->exists()) {
+            return true;
+        }
+        
+        // Also check the role column in users table
+        if ($this->role === $role) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**

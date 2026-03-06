@@ -24,14 +24,5 @@ class DatabaseSeeder extends Seeder
             PickupSeeder::class,
             InventoryTransactionSeeder::class,
         ]);
-
-        $this->call([
-            UserSeeder::class,
-            KategoriSeeder::class,
-            SatuanSeeder::class,
-            UkuranSeeder::class,
-            BarangSeeder::class,
-            LantaiSeeder::class,
-        ]);
     }
 }
