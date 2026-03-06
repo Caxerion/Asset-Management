@@ -3,67 +3,52 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Role;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
-        // Admin
-        User::create([
-            'name' => 'brian',
-            'email' => 'bryan@example.com',
-            'password' => Hash::make('briangaming123'),
-            'role' => 'admin',
-        ]);
+        // Create roles
+        $admin = Role::firstOrCreate(['name' => 'admin'], ['label' => 'Administrator']);
+        $peminjam = Role::firstOrCreate(['name' => 'peminjam'], ['label' => 'Peminjam']);
+        $read = Role::firstOrCreate(['name' => 'read'], ['label' => 'Read Only']);
+        $test = Role::firstOrCreate(['name' => 'test'], ['label' => 'Test']);
 
-        // PIC setiap lantai 
-        User::create([
-            'name' => 'PIC Lantai Mezanine',
-            'email' => 'picM@example.com',
-            'password' => Hash::make('picm1234'),
-            'role' => 'pic',
-            'created_by' => 1,
-        ]);
-        User::create([
-            'name' => 'PIC Lantai 1',
-            'email' => 'pic1@example.com',
-            'password' => Hash::make('picsatu24'),
-            'role' => 'pic',
-            'created_by' => 1,
-        ]);
-        User::create([
-            'name' => 'PIC Lantai 2',
-            'email' => 'pic2@example.com',
-            'password' => Hash::make('picdua34'),
-            'role' => 'pic',
-            'created_by' => 1,
-        ]);
-        User::create([
-            'name' => 'PIC Lantai 3',
-            'email' => 'pic3@example.com',
-            'password' => Hash::make('pictiga45'),
-            'role' => 'pic',
-            'created_by' => 1,
-        ]);
+        // Create demo users with passwords
+        $adminUser = User::firstOrCreate(
+            ['email' => 'admin@gudang.test'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('adminBARANG!'),
+            ]
+        );
+        $adminUser->assignRole('admin');
 
-        // Staff
-        User::create([
-            'name' => 'Staff',
-            'email' => 'staff@example.com',
-            'password' => Hash::make('staf1234'),
-            'role' => 'staff',
-            'created_by' => 1,
-        ]);
+        $peminjamUser = User::firstOrCreate(
+            ['email' => 'peminjam@gudang.test'],
+            [
+                'name' => 'Peminjam User',
+                'password' => Hash::make('PeminjamBARANG!'),
+            ]
+        );
+        $peminjamUser->assignRole('peminjam');
 
-        //jews
-        User::create([
-            'name' => 'JEWS',
-            'email' => 'jews@example.com',
-            'password' => Hash::make('yahoodie122'),
-            'role' => 'jews',
-            'created_by' => 1,
-        ]);
+        $readUser = User::firstOrCreate(
+            ['email' => 'read@gudang.test'],
+            [
+                'name' => 'Read Only User',
+                'password' => Hash::make('ReadBARANG!'),
+            ]
+        );
+        $readUser->assignRole('read');
     }
 }
