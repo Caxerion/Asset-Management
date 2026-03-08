@@ -373,7 +373,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                         </span>
                                     @endforeach
                                     @if($remainingCount > 0)
-                                        <a href="{{ route('persediaan.show', $pickup->id) }}" class="product-more-indicator" title="Lihat semua {{ $items->count }} barang">
+                                        <a href="{{ route('persediaan.show', $pickup->id) }}" class="product-more-indicator" title="Lihat semua {{ $items->count() }} barang">
+
                                             +{{ $remainingCount }} lainnya...
                                         </a>
                                     @endif
