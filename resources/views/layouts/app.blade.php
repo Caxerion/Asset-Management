@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Stock Barang & Obat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="assets/fontsAwesome/css/all.min.css">
     
     <style>
         .pagination-wrapper {
@@ -52,14 +53,61 @@
             color: #64748b;
             margin-top: 10px;
         }
+    <style>
+        footer{
+          padding: 2.5rem 7% 0.6rem 7%;
+          background-color: #004b97;
+          color: white;
+        }
+        footer .footer-inner{
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          width: 100%;
+        }
+        .footer-media,.footer-news{
+            align-self: flex-start;
+        }
+        .footer-media h2{
+            border-bottom: 1px solid white;
+        }
+        .footer-media a{
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            width: 100%;
+            margin-top: 1rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .footer-media a i{
+            margin-right: 0.5rem;
+            font-size: 1.4rem;
+        }
+        .footer-media a:hover{
+          color: #3e68ff;
+        }
+        .footer-news{
+            width: 50%;
+        }
+        .footer-news h2{
+            border-bottom: 1px solid white;
+        }
+        .footer-credit{
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .footer-credit h1{
+          font-size: 1rem;
+        }
     </style>
-
 </head>
 <body>
     {{-- Header atas --}}
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid d-flex justify-content-between">
-            <img src="assets/img/logo-RE.png" alt="logo" class="d-inline-block align-text-top" width="40" height="50">
+            <img src="assets\img\logo-RE.png" alt="logo" class="d-inline-block align-text-top" width="40" height="50">
             <div class="d-flex align-items-center">
                 <span class="navbar-brand mb-0 h1">Stock Barang & Obat</span>
             </div>
@@ -82,7 +130,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}"  style="color:white;">Dashboard</a>
+                        <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"  style="color:white;">Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"  style="color:white;">
@@ -110,10 +158,38 @@
     </nav>
 
     {{-- Konten halaman --}}
-    <main class="py-4">
-        @yield('content')
-    </main>
-
+    
+    @yield('content')
+    
+    <!-- footer -->
+    <footer>
+     <div class="footer-inner">
+        <div class="footer-media">
+          <h2>Social Media</h2>
+          <!--<i class="fab fa-facebook"></i>
+          <i class="fab fa-github"></i>
+          <i class="fab fa-instagram"></i> -->
+          <a href="insta"><i class="fab fa-instagram"></i>Instagram</a>
+          <a href="insta"><i class="fab fa-facebook"></i>Facebook</a>
+          <a href="insta"><i class="fab fa-github"></i>Github</a>
+        </div>
+        <div class="footer-news">
+            <h2>News</h2>
+            <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente, quisquam deserunt laudantium laboriosam cupiditate repudiandae exercitationem a? Molestias, voluptatum, hic libero reiciendis 
+                ipsam adipisci veritatis eum porro eaque ipsum at!
+            </p>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus, debitis.
+            </p>
+        </div>
+      </div>
+      <div class="footer-credit">
+          <h1>
+            &copy;2025 Collection all rights, 
+            </h1>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
