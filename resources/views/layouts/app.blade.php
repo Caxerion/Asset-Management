@@ -9,23 +9,24 @@
 </head>
 <body>
     {{-- Header atas --}}
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-light bg-light">
         <div class="container-fluid d-flex justify-content-between">
+            <img src="assets\img\logo-RE.png" alt="logo" class="d-inline-block align-text-top" width="40" height="50">
             <div class="d-flex align-items-center">
                 <span class="navbar-brand mb-0 h1">Stock Barang & Obat</span>
             </div>
             <div class="d-flex align-items-center">
-                <span class="text-white me-3">👤 {{ auth()->user()->name ?? 'Guest' }}</span>
+                <span class="text-black me-3">👤 {{ auth()->user()->name ?? 'Guest' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                    <button type="submit" class="btn btn-sm btn-outline-dark">Logout</button>
                 </form>
             </div>
         </div>
     </nav>
 
     {{-- Navbar bawah untuk menu utama --}}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-secondary bg-secondary">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -33,19 +34,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ route('dashboard') }}"  style="color:white;">Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"  style="color:white;">
                             Persediaan
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="persediaanDropdown">
-                            <li><a class="dropdown-item" href="{{ route('persediaan.index') }}">Histori</a></li>
+                            <li><a class="dropdown-item" href="{{ route('persediaan.index') }}" >Histori</a></li>
                             <li><a class="dropdown-item" href="{{ route('stock.index') }}">Stock</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="masterdataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="masterdataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:white;">
                             Master Data
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="masterdataDropdown">
