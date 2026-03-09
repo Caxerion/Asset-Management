@@ -50,7 +50,7 @@
                             Master Data
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="masterdataDropdown">
-                            <li><a class="dropdown-item" href="{{ route('masterdata.index') }}">Kategori/Lantai/Supplier</a></li>
+                            <li><a class="dropdown-item" href="{{ route('masterdata.index') }}">Kategori</a></li>
                         </ul>
                     </li>
                 </ul>

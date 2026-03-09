@@ -67,9 +67,7 @@
                         <select name="role" required>
                             <option value="" disabled selected>Pilih Role</option>
                             <option value="admin">Administrator</option>
-                            <option value="peminjam">Peminjam</option>
                             <option value="read">Read Only</option>
-                            <option value="test">Test</option>
                         </select>
                         <label>Role</label>
                     </div>

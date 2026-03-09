@@ -17,13 +17,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
+        // Only 2 roles: admin and read-only
         $admin = Role::firstOrCreate(['name' => 'admin'], ['label' => 'Administrator']);
-        $peminjam = Role::firstOrCreate(['name' => 'peminjam'], ['label' => 'Peminjam']);
         $read = Role::firstOrCreate(['name' => 'read'], ['label' => 'Read Only']);
-        $test = Role::firstOrCreate(['name' => 'test'], ['label' => 'Test']);
 
-        // Create demo users with passwords
+        // Create admin user with full access (create, update, delete, read)
         $adminUser = User::firstOrCreate(
             ['email' => 'admin@gudang.test'],
             [
@@ -33,15 +31,7 @@ class UserSeeder extends Seeder
         );
         $adminUser->assignRole('admin');
 
-        $peminjamUser = User::firstOrCreate(
-            ['email' => 'peminjam@gudang.test'],
-            [
-                'name' => 'Peminjam User',
-                'password' => Hash::make('PeminjamBARANG!'),
-            ]
-        );
-        $peminjamUser->assignRole('peminjam');
-
+        // Create read-only user (can only read)
         $readUser = User::firstOrCreate(
             ['email' => 'read@gudang.test'],
             [

@@ -16,7 +16,7 @@ class PersediaanController extends Controller
     // Menampilkan histori pengambilan barang dan stock barang (same page)
     public function index(Request $request)
     {
-        // Pickups query
+        // Pickups query - ensure items relationship is always eager loaded with product
         $pickupQuery = Pickup::with(['user', 'floor', 'items.product']);
         
         // Search filter for histori pengambilan
