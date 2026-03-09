@@ -21,7 +21,7 @@
                     <img src="{{ asset('images/RE.png') }}" height="50">
 
                     <h5 class="login-title">Create Account 📝</h5>
-                    <p class="login-subtitle">Register to access Stock Barang & Obat</p>
+                    <p class="login-subtitle" style="text-align: left;">Register to access Stock Barang & Obat</p>
                 </div>
 
                 @if ($errors->any())

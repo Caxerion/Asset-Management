@@ -52,32 +52,36 @@ Route::middleware('auth')->group(function () {
         // User management
         Route::resource('users', UserController::class);
         
-        // Master data management
-        Route::resource('products', ProductController::class);
-        Route::resource('categories', CategoryController::class);
-        Route::resource('floors', FloorController::class);
-        Route::resource('sizes', SizeController::class);
+        // =====================================================
+        // Separate Master Data Routes
+        // =====================================================
+        
+        // Kategori (Category) Routes
+        Route::get('/masterdata/kategori', [CategoryController::class, 'index'])->name('masterdata.kategori.index');
+        Route::post('/masterdata/kategori', [CategoryController::class, 'store'])->name('masterdata.kategori.store');
+        Route::put('/masterdata/kategori/{category}', [CategoryController::class, 'update'])->name('masterdata.kategori.update');
+        Route::delete('/masterdata/kategori/{category}', [CategoryController::class, 'destroy'])->name('masterdata.kategori.destroy');
+        
+        // Ukuran (Size) Routes
+        Route::get('/masterdata/ukuran', [SizeController::class, 'index'])->name('masterdata.ukuran.index');
+        Route::post('/masterdata/ukuran', [SizeController::class, 'store'])->name('masterdata.ukuran.store');
+        Route::put('/masterdata/ukuran/{size}', [SizeController::class, 'update'])->name('masterdata.ukuran.update');
+        Route::delete('/masterdata/ukuran/{size}', [SizeController::class, 'destroy'])->name('masterdata.ukuran.destroy');
+        
+        // Lantai (Floor) Routes
+        Route::get('/masterdata/lantai', [FloorController::class, 'index'])->name('masterdata.lantai.index');
+        Route::post('/masterdata/lantai', [FloorController::class, 'store'])->name('masterdata.lantai.store');
+        Route::put('/masterdata/lantai/{floor}', [FloorController::class, 'update'])->name('masterdata.lantai.update');
+        Route::delete('/masterdata/lantai/{floor}', [FloorController::class, 'destroy'])->name('masterdata.lantai.destroy');
+        
+        // Produk (Product) Routes
+        Route::get('/masterdata/produk', [ProductController::class, 'index'])->name('masterdata.produk.index');
+        Route::post('/masterdata/produk', [ProductController::class, 'store'])->name('masterdata.produk.store');
+        Route::put('/masterdata/produk/{product}', [ProductController::class, 'update'])->name('masterdata.produk.update');
+        Route::delete('/masterdata/produk/{product}', [ProductController::class, 'destroy'])->name('masterdata.produk.destroy');
+        
+        // Legacy masterdata index (for backward compatibility)
         Route::get('/masterdata', [MasterDataController::class, 'index'])->name('masterdata.index');
-        
-        // Master Data CRUD routes (Category)
-        Route::post('/masterdata/category', [MasterDataController::class, 'storeCategory'])->name('masterdata.category.store');
-        Route::put('/masterdata/category/{category}', [MasterDataController::class, 'updateCategory'])->name('masterdata.category.update');
-        Route::delete('/masterdata/category/{category}', [MasterDataController::class, 'destroyCategory'])->name('masterdata.category.destroy');
-        
-        // Master Data CRUD routes (Floor)
-        Route::post('/masterdata/floor', [MasterDataController::class, 'storeFloor'])->name('masterdata.floor.store');
-        Route::put('/masterdata/floor/{floor}', [MasterDataController::class, 'updateFloor'])->name('masterdata.floor.update');
-        Route::delete('/masterdata/floor/{floor}', [MasterDataController::class, 'destroyFloor'])->name('masterdata.floor.destroy');
-        
-        // Master Data CRUD routes (Product)
-        Route::post('/masterdata/product', [MasterDataController::class, 'storeProduct'])->name('masterdata.product.store');
-        Route::put('/masterdata/product/{product}', [MasterDataController::class, 'updateProduct'])->name('masterdata.product.update');
-        Route::delete('/masterdata/product/{product}', [MasterDataController::class, 'destroyProduct'])->name('masterdata.product.destroy');
-        
-        // Master Data CRUD routes (Size)
-        Route::post('/masterdata/size', [MasterDataController::class, 'storeSize'])->name('masterdata.size.store');
-        Route::put('/masterdata/size/{size}', [MasterDataController::class, 'updateSize'])->name('masterdata.size.update');
-        Route::delete('/masterdata/size/{size}', [MasterDataController::class, 'destroySize'])->name('masterdata.size.destroy');
         
         // Transaction management
         Route::resource('receipts', ReceiptController::class);

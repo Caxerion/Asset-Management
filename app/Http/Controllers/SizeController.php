@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Size;
 use Illuminate\Http\Request;
 
-class SizeController
+class SizeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $sizes = Size::paginate(7);
+        return view('masterdata.ukuran', compact('sizes'));
     }
 
     /**
@@ -27,38 +21,45 @@ class SizeController
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        Size::create([
+            'name' => $request->name,
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return redirect()->route('masterdata.ukuran.index')->with('success', 'Ukuran berhasil ditambahkan.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Size $size)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $size->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('masterdata.ukuran.index')->with('success', 'Ukuran berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Size $size)
     {
-        //
+        // Check if size has products
+        if ($size->products()->count() > 0) {
+            return redirect()->route('masterdata.ukuran.index')->with('error', 'Ukuran tidak dapat dihapus karena masih memiliki produk.');
+        }
+
+        $size->delete();
+
+        return redirect()->route('masterdata.ukuran.index')->with('success', 'Ukuran berhasil dihapus.');
     }
 }

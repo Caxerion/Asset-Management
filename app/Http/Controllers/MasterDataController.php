@@ -12,10 +12,10 @@ class MasterDataController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        $floors = Floor::all();
-        $products = Product::with(['category', 'size'])->get();
-        $sizes = Size::all();
+        $categories = Category::paginate(10);
+        $floors = Floor::paginate(10);
+        $products = Product::with(['category', 'size'])->paginate(10);
+        $sizes = Size::paginate(10);
         
         return view('masterdata.index', compact('categories', 'floors', 'products', 'sizes'));
     }

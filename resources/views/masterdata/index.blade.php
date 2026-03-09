@@ -40,7 +40,7 @@
                     <tbody>
                         @forelse($categories as $category)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $categories->firstItem() + $loop->index }}</td>
                                 <td>{{ $category->name }}</td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal{{ $category->id }}">
@@ -84,6 +84,31 @@
                         @endforeach
                     </tbody>
                 </table>
+                
+                @if($categories->hasPages())
+                <div class="pagination-wrapper mt-3">
+                    @if($categories->onFirstPage())
+                        <span class="page-link disabled">‹</span>
+                    @else
+                        <a href="{{ $categories->previousPageUrl() }}" class="page-link">‹</a>
+                    @endif
+
+                    @foreach($categories->getUrlRange(1, $categories->lastPage()) as $page => $url)
+                        @if($page == $categories->currentPage())
+                            <span class="page-link active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="page-link">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($categories->hasMorePages())
+                        <a href="{{ $categories->nextPageUrl() }}" class="page-link">›</a>
+                    @else
+                        <span class="page-link disabled">›</span>
+                    @endif
+                </div>
+                <div class="pagination-info">Menampilkan {{ $categories->firstItem() }} sampai {{ $categories->lastItem() }} dari {{ $categories->total() }} data</div>
+                @endif
             @else
                 <p>Belum ada data kategori.</p>
             @endif
@@ -136,7 +161,7 @@
                     <tbody>
                         @foreach($sizes as $size)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $sizes->firstItem() + $loop->index }}</td>
                                 <td>{{ $size->name }}</td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSizeModal{{ $size->id }}">
@@ -180,6 +205,31 @@
                         @endforeach
                     </tbody>
                 </table>
+                
+                @if($sizes->hasPages())
+                <div class="pagination-wrapper mt-3">
+                    @if($sizes->onFirstPage())
+                        <span class="page-link disabled">‹</span>
+                    @else
+                        <a href="{{ $sizes->previousPageUrl() }}" class="page-link">‹</a>
+                    @endif
+
+                    @foreach($sizes->getUrlRange(1, $sizes->lastPage()) as $page => $url)
+                        @if($page == $sizes->currentPage())
+                            <span class="page-link active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="page-link">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($sizes->hasMorePages())
+                        <a href="{{ $sizes->nextPageUrl() }}" class="page-link">›</a>
+                    @else
+                        <span class="page-link disabled">›</span>
+                    @endif
+                </div>
+                <div class="pagination-info">Menampilkan {{ $sizes->firstItem() }} sampai {{ $sizes->lastItem() }} dari {{ $sizes->total() }} data</div>
+                @endif
             @else
                 <p>Belum ada data ukuran.</p>
             @endif
@@ -232,7 +282,7 @@
                     <tbody>
                         @foreach($floors as $floor)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $floors->firstItem() + $loop->index }}</td>
                                 <td>{{ $floor->name }}</td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFloorModal{{ $floor->id }}">
@@ -276,6 +326,31 @@
                         @endforeach
                     </tbody>
                 </table>
+                
+                @if($floors->hasPages())
+                <div class="pagination-wrapper mt-3">
+                    @if($floors->onFirstPage())
+                        <span class="page-link disabled">‹</span>
+                    @else
+                        <a href="{{ $floors->previousPageUrl() }}" class="page-link">‹</a>
+                    @endif
+
+                    @foreach($floors->getUrlRange(1, $floors->lastPage()) as $page => $url)
+                        @if($page == $floors->currentPage())
+                            <span class="page-link active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="page-link">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($floors->hasMorePages())
+                        <a href="{{ $floors->nextPageUrl() }}" class="page-link">›</a>
+                    @else
+                        <span class="page-link disabled">›</span>
+                    @endif
+                </div>
+                <div class="pagination-info">Menampilkan {{ $floors->firstItem() }} sampai {{ $floors->lastItem() }} dari {{ $floors->total() }} data</div>
+                @endif
             @else
                 <p>Belum ada data lantai.</p>
             @endif
@@ -333,7 +408,7 @@
                     <tbody>
                         @foreach($products as $product)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $products->firstItem() + $loop->index }}</td>
                                 <td>{{ $product->sku }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->category->name ?? '-' }}</td>
@@ -412,6 +487,31 @@
                         @endforeach
                     </tbody>
                 </table>
+                
+                @if($products->hasPages())
+                <div class="pagination-wrapper mt-3">
+                    @if($products->onFirstPage())
+                        <span class="page-link disabled">‹</span>
+                    @else
+                        <a href="{{ $products->previousPageUrl() }}" class="page-link">‹</a>
+                    @endif
+
+                    @foreach($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                        @if($page == $products->currentPage())
+                            <span class="page-link active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="page-link">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($products->hasMorePages())
+                        <a href="{{ $products->nextPageUrl() }}" class="page-link">›</a>
+                    @else
+                        <span class="page-link disabled">›</span>
+                    @endif
+                </div>
+                <div class="pagination-info">Menampilkan {{ $products->firstItem() }} sampai {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
+                @endif
             @else
                 <p>Belum ada data barang.</p>
             @endif
