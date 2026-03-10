@@ -7,7 +7,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Pickup No: {{ $pickup->pickup_no }}</h5>
-            <p><strong>Nama Pengambil:</strong> {{ $pickup->user->name }} ({{ $pickup->user->email }})</p>
+            <p><strong>Nama Pengambil:</strong> {{ $pickup->user->name }}</p>
             <p><strong>Tanggal Pengambilan:</strong> {{ $pickup->created_at->format('d M Y H:i') }}</p>
             <p><strong>Lantai:</strong> {{ $pickup->floor->name }}</p>
         </div>

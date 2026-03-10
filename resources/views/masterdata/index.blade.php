@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Master Data</h1>
+    <h1><i class="fa fa-database" style="margin-right: 8px;"></i>Master Data</h1>
 
     {{-- Flash Messages --}}
     @if(session('success'))
@@ -24,7 +24,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>Kategori Barang</span>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                + Tambah Kategori
+                <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Kategori
             </button>
         </div>
         <div class="card-body">
@@ -145,7 +145,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>Data Ukuran</span>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSizeModal">
-                + Tambah Ukuran
+                <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Ukuran
             </button>
         </div>
         <div class="card-body">
@@ -266,7 +266,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>Data Lantai</span>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addFloorModal">
-                + Tambah Lantai
+                <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Lantai
             </button>
         </div>
         <div class="card-body">
@@ -387,7 +387,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>Data Barang</span>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                + Tambah Barang
+                <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Barang
             </button>
         </div>
         <div class="card-body">

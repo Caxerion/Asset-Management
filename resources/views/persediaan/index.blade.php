@@ -295,20 +295,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<div class="container">
+<div class="container pt-3">
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
-        <span class="text-muted fs-3">Persediaan /</span>
-        <h1 class="d-inline fs-3">Histori Pengambilan</h1>
+        <span class="text-muted fs-5"><i class="fa fa-clipboard-list" style="margin-right: 2px;"></i>Persediaan /</span>
+        <span class="d-inline fs-5"><i class="fa fa-link" style="margin-right: 2px;"></i>Histori Pengambilan</span>
     </div>
 
     {{-- Tab menu --}}
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('persediaan.index') }}">Histori Pengambilan</a>
+            <a class="nav-link active" href="{{ route('persediaan.index') }}"><i class="fa fa-link" style="margin-right: 4px;"></i>Histori Pengambilan</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('stock.index') }}">Stock Barang</a>
+            <a class="nav-link" href="{{ route('stock.index') }}"><i class="fa fa-list" style="margin-right: 4px;"></i>Stock Barang</a>
         </li>
     </ul>
 

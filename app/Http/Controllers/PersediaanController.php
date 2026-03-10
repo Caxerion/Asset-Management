@@ -6,6 +6,7 @@ use App\Models\Pickup;
 use App\Models\PickupLine;
 use App\Models\Product;
 use App\Models\Floor;
+use App\Models\Person;
 use App\Models\InventoryTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +44,7 @@ class PersediaanController extends Controller
         
         $products = $productQuery->paginate(6);
 
-        $users = \App\Models\User::all();
+        $users = Person::where('is_active', true)->get();
         $floors = Floor::all();
         
         // All products for the form in modal - eager load relationships and append stock_balance
@@ -57,7 +58,7 @@ class PersediaanController extends Controller
     {
         $products   = Product::with(['category', 'size', 'stockBalances'])->get();
         $floors     = Floor::all();
-        $users      = \App\Models\User::all();
+        $users      = Person::where('is_active', true)->get();
         $categories = \App\Models\Category::all();
         $sizes      = \App\Models\Size::all();
 
@@ -72,7 +73,7 @@ class PersediaanController extends Controller
         
         $request->validate([
             'floor_id' => 'required|exists:floors,id',
-            'user_id'  => 'required|exists:users,id',
+            'user_id'  => 'required|exists:people,id',
             'items'    => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.qty'        => 'required|integer|min:1',

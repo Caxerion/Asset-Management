@@ -14,6 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PersediaanController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\PersonController;
 
 
 Route::get('/', function () {
@@ -79,6 +80,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/masterdata/produk', [ProductController::class, 'store'])->name('masterdata.produk.store');
         Route::put('/masterdata/produk/{product}', [ProductController::class, 'update'])->name('masterdata.produk.update');
         Route::delete('/masterdata/produk/{product}', [ProductController::class, 'destroy'])->name('masterdata.produk.destroy');
+        
+        // Person (Person) Routes
+        Route::get('/person', [PersonController::class, 'index'])->name('person.index');
+        Route::post('/person', [PersonController::class, 'store'])->name('person.store');
+        Route::put('/person/{person}', [PersonController::class, 'update'])->name('person.update');
+        Route::delete('/person/{person}', [PersonController::class, 'destroy'])->name('person.destroy');
+
+
         
         // Legacy masterdata index (for backward compatibility)
         Route::get('/masterdata', [MasterDataController::class, 'index'])->name('masterdata.index');
