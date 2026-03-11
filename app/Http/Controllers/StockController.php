@@ -16,8 +16,11 @@ class StockController extends Controller
 
         if ($request->q) {
             $q = $request->q;
-            $query->where('name','like',"%$q%")
-                  ->orWhereHas('category', fn($c) => $c->where('name','like',"%$q%"));
+            $query->where(function($query) use ($q) {
+                $query->where('name','like',"%$q%")
+                      ->orWhereHas('category', fn($c) => $c->where('name','like',"%$q%"))
+                      ->orWhereHas('size', fn($s) => $s->where('name','like',"%$q%"));
+            });
         }
 
         // Get page from session or URL, default to 1
