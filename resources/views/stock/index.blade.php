@@ -16,7 +16,45 @@
         background-color: #dee2e6;
     }
 </style>
-<div class="container">
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for success message - Stock reset
+    @if(session('success') && str_contains(session('success'), 'direset'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Stock Di Reset',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for success message - Stock added
+    @if(session('success') && str_contains(session('success'), 'ditambahkan'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Stock Ditambah',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for error message
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+});
+</script>
+<div class="container pt-3">
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
         <span class="text-muted fs-5"><i class="fa fa-clipboard-list" style="margin-right: 2px;"></i>Persediaan/</span>
@@ -33,29 +71,23 @@
         </li>
     </ul>
 
-    {{-- Search --}}
-    <div class="d-flex justify-content-between mb-3">
-        <div class="col-md-4">
+    {{-- Card with table --}}
+    <div class="card">
+        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
             <form method="GET" action="{{ route('stock.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari..." 
-                       class="form-control form-control-sm" value="{{ request('q') }}">
+                <input type="text" name="q" placeholder="Cari Stock Barang" 
+                       class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;"value="{{ request('q') }}">
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
                 @if(request('q'))
                     <a href="{{ route('stock.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
                 @endif
             </form>
-        </div>
-        <div>
-            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetStockModal">
-                <i class="fa fa-rotate-left"></i> Reset Semua Stock
-            </button>
-        </div>
-    </div>
-
-    {{-- Card with table --}}
-    <div class="card">
-        <div class="card-header bg-white py-2">
-            <h6 class="mb-0">Data Stock Barang</h6>
+            <div class="d-flex gap-2 align-items-center">
+                <!-- <h6 class="mb-0">Data Stock Barang</h6> -->
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetStockModal" style="border-radius: 6px; padding-bottom:10px; padding-top:10px;">
+                    <i class="fa fa-rotate-left"></i> Reset Semua Stock
+                </button>
+            </div>
         </div>
         <div class="card-body p-0">
             <table class="table table-bordered table-striped mb-0">

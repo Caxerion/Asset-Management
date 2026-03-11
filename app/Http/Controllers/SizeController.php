@@ -10,9 +10,11 @@ class SizeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sizes = Size::paginate(7);
+        $page = $request->page ?? session('ukuran_page', 1);
+        $sizes = Size::paginate(7, ['*'], 'page', $page);
+        session(['ukuran_page' => $sizes->currentPage()]);
         return view('masterdata.ukuran', compact('sizes'));
     }
 
@@ -29,7 +31,8 @@ class SizeController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.ukuran.index')->with('success', 'Ukuran berhasil ditambahkan.');
+        $page = session('ukuran_page', 1);
+        return redirect()->route('masterdata.ukuran.index', ['page' => $page])->with('success', 'Ukuran berhasil ditambahkan.');
     }
 
     /**
@@ -45,7 +48,8 @@ class SizeController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.ukuran.index')->with('success', 'Ukuran berhasil diperbarui.');
+        $page = session('ukuran_page', 1);
+        return redirect()->route('masterdata.ukuran.index', ['page' => $page])->with('success', 'Ukuran berhasil diperbarui.');
     }
 
     /**
@@ -55,11 +59,13 @@ class SizeController extends Controller
     {
         // Check if size has products
         if ($size->products()->count() > 0) {
-            return redirect()->route('masterdata.ukuran.index')->with('error', 'Ukuran tidak dapat dihapus karena masih memiliki produk.');
+            $page = session('ukuran_page', 1);
+            return redirect()->route('masterdata.ukuran.index', ['page' => $page])->with('error', 'Ukuran tidak dapat dihapus karena masih memiliki produk.');
         }
 
         $size->delete();
 
-        return redirect()->route('masterdata.ukuran.index')->with('success', 'Ukuran berhasil dihapus.');
+        $page = session('ukuran_page', 1);
+        return redirect()->route('masterdata.ukuran.index', ['page' => $page])->with('success', 'Ukuran berhasil dihapus.');
     }
 }

@@ -10,9 +10,11 @@ class FloorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $floors = Floor::paginate(7);
+        $page = $request->page ?? session('lantai_page', 1);
+        $floors = Floor::paginate(7, ['*'], 'page', $page);
+        session(['lantai_page' => $floors->currentPage()]);
         return view('masterdata.lantai', compact('floors'));
     }
 
@@ -29,7 +31,8 @@ class FloorController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.lantai.index')->with('success', 'Lantai berhasil ditambahkan.');
+        $page = session('lantai_page', 1);
+        return redirect()->route('masterdata.lantai.index', ['page' => $page])->with('success', 'Lantai berhasil ditambahkan.');
     }
 
     /**
@@ -45,7 +48,8 @@ class FloorController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.lantai.index')->with('success', 'Lantai berhasil diperbarui.');
+        $page = session('lantai_page', 1);
+        return redirect()->route('masterdata.lantai.index', ['page' => $page])->with('success', 'Lantai berhasil diperbarui.');
     }
 
     /**
@@ -55,16 +59,19 @@ class FloorController extends Controller
     {
         // Check if floor has stock balances
         if ($floor->stockBalances()->count() > 0) {
-            return redirect()->route('masterdata.lantai.index')->with('error', 'Lantai tidak dapat dihapus karena masih memiliki stock balance.');
+            $page = session('lantai_page', 1);
+            return redirect()->route('masterdata.lantai.index', ['page' => $page])->with('error', 'Lantai tidak dapat dihapus karena masih memiliki stock balance.');
         }
 
         // Check if floor has pickups
         if ($floor->pickups()->count() > 0) {
-            return redirect()->route('masterdata.lantai.index')->with('error', 'Lantai tidak dapat dihapus karena masih memiliki pickup.');
+            $page = session('lantai_page', 1);
+            return redirect()->route('masterdata.lantai.index', ['page' => $page])->with('error', 'Lantai tidak dapat dihapus karena masih memiliki pickup.');
         }
 
         $floor->delete();
 
-        return redirect()->route('masterdata.lantai.index')->with('success', 'Lantai berhasil dihapus.');
+        $page = session('lantai_page', 1);
+        return redirect()->route('masterdata.lantai.index', ['page' => $page])->with('success', 'Lantai berhasil dihapus.');
     }
 }

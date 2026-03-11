@@ -12,9 +12,11 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['category', 'size', 'stockBalances'])->paginate(7);
+        $page = $request->page ?? session('produk_page', 1);
+        $products = Product::with(['category', 'size', 'stockBalances'])->paginate(7, ['*'], 'page', $page);
+        session(['produk_page' => $products->currentPage()]);
         $categories = Category::all();
         $sizes = Size::all();
         return view('masterdata.produk', compact('products', 'categories', 'sizes'));
@@ -53,7 +55,8 @@ class ProductController extends Controller
         $validated['is_active'] = true;
 
         $product = Product::create($validated);
-        return redirect()->route('masterdata.produk.index')->with('success', 'Produk berhasil ditambahkan');
+        $page = session('produk_page', 1);
+        return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil ditambahkan');
     }
 
     /**
@@ -72,7 +75,8 @@ class ProductController extends Controller
         ]);
 
         $product->update($validated);
-        return redirect()->route('masterdata.produk.index')->with('success', 'Produk berhasil diupdate');
+        $page = session('produk_page', 1);
+        return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil diupdate');
     }
 
     /**
@@ -82,10 +86,12 @@ class ProductController extends Controller
     {
         // Check if product has stock balances
         if ($product->stockBalances()->count() > 0) {
-            return redirect()->route('masterdata.produk.index')->with('error', 'Barang tidak dapat dihapus karena masih memiliki stock balance.');
+            $page = session('produk_page', 1);
+            return redirect()->route('masterdata.produk.index', ['page' => $page])->with('error', 'Barang tidak dapat dihapus karena masih memiliki stock balance.');
         }
 
         $product->delete();
-        return redirect()->route('masterdata.produk.index')->with('success', 'Produk berhasil dihapus');
+        $page = session('produk_page', 1);
+        return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil dihapus');
     }
 }

@@ -16,6 +16,14 @@
         background-color: #dee2e6;
     }
     
+    /* Make histori table wider */
+    .table-responsive {
+        min-width: 100%;
+    }
+    .histori-table {
+        min-width: 1200px;
+    }
+    
     /* Label kecil untuk form */
     .info-label {
         font-weight: 600;
@@ -102,8 +110,54 @@
         font-weight: 500;
     }
 </style>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Check for success message - Pencatatan Berhasil
+    @if(session('success') && str_contains(session('success'), 'dicatat'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Pencatatan Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for success message - Histori Terhapus
+    @if(session('success') && str_contains(session('success'), 'dihapus'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Histori Terhapus',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for success message - Histori direset
+    @if(session('success') && str_contains(session('success'), 'direset'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Histori Direset',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for error message
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Yah... Pencatatan Gagal! :(',
+            text: 'Ada produk terdaftar yang belum terisi stocknya',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
     let itemIndex = 0;
     const itemsBody = document.getElementById('modalItemsBody');
     const productSelect = document.getElementById('modalProductSelect');
@@ -312,37 +366,31 @@ document.addEventListener('DOMContentLoaded', function() {
         </li>
     </ul>
 
-    {{-- Search + tombol catat pengambilan --}}
-    <div class="d-flex justify-content-between mb-3">
-        <div class="col-md-4 ms-2">
+    {{-- Card with table --}}
+    <div class="card">
+        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
             <form method="GET" action="{{ route('persediaan.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari..." 
-                       class="form-control form-control-sm" value="{{ request('q') }}">
+                <input type="text" name="q" placeholder="Cari Histori Pengambilan Barang..." 
+                       class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;" value="{{ request('q') }}">
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
                 @if(request('q'))
                     <a href="{{ route('persediaan.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
                 @endif
             </form>
-        </div>
-        <div class="col-md-4 text-end me-2">
-            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#catatPengambilanModal">
-                <i class="fa fa-plus"></i> Catat Pengambilan
-            </button>
-            @if(Auth::user() && Auth::user()->hasRole('admin'))
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetHistoriModal">
-                    <i class="fa fa-trash"></i> Reset Histori
+            <div class="d-flex gap-2 align-items-center">
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#catatPengambilanModal" style="border-radius: 6px; padding-bottom:10px; padding-top:10px;">
+                    <i class="fa fa-plus"></i> Catat Pengambilan
                 </button>
-            @endif
-        </div>
-    </div>
-
-    {{-- Card with table --}}
-    <div class="card">
-        <div class="card-header bg-white py-2">
-            <h6 class="mb-0">Data Histori Pengambilan</h6>
+                @if(Auth::user() && Auth::user()->hasRole('admin'))
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetHistoriModal" style="padding: 10px;">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                @endif
+            </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-bordered table-striped mb-0" style="padding-top: 20px;">
+            <div class="table-responsive">
+            <table class="table table-bordered table-striped mb-0 histori-table" style="padding-top: 20px;">
                 <thead>
                     <tr class="no-border">
                         <th style="width: 65px; vertical-align: middle;">#</th>
@@ -397,6 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 
@@ -505,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="number" id="modalQtyInput" name="qty" class="form-control" min="1" value="1">
                 </div>
                 <div class="col-md-2">
-                    <button type="button" id="modalAddItemBtn" class="btn btn-success w-100">
+                    <button type="button" id="modalAddItemBtn" class="btn btn-primary w-100">
                         <i class="fa fa-plus"></i> Tambah Barang
                     </button>
                 </div>
@@ -685,4 +734,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </div> -->
 
 @endsection
+
 

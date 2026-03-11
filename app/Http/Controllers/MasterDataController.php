@@ -10,12 +10,26 @@ use Illuminate\Http\Request;
 
 class MasterDataController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::paginate(10);
-        $floors = Floor::paginate(10);
-        $products = Product::with(['category', 'size'])->paginate(10);
-        $sizes = Size::paginate(10);
+        // Get pages from session or URL
+        $categoryPage = $request->category_page ?? session('masterdata_category_page', 1);
+        $floorPage = $request->floor_page ?? session('masterdata_floor_page', 1);
+        $productPage = $request->product_page ?? session('masterdata_product_page', 1);
+        $sizePage = $request->size_page ?? session('masterdata_size_page', 1);
+
+        $categories = Category::paginate(10, ['*'], 'category_page', $categoryPage);
+        $floors = Floor::paginate(10, ['*'], 'floor_page', $floorPage);
+        $products = Product::with(['category', 'size'])->paginate(10, ['*'], 'product_page', $productPage);
+        $sizes = Size::paginate(10, ['*'], 'size_page', $sizePage);
+        
+        // Store current pages in session
+        session([
+            'masterdata_category_page' => $categories->currentPage(),
+            'masterdata_floor_page' => $floors->currentPage(),
+            'masterdata_product_page' => $products->currentPage(),
+            'masterdata_size_page' => $sizes->currentPage(),
+        ]);
         
         return view('masterdata.index', compact('categories', 'floors', 'products', 'sizes'));
     }
@@ -45,7 +59,8 @@ class MasterDataController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.index')->with('success', 'Ukuran berhasil diperbarui.');
+        $page = session('masterdata_size_page', 1);
+        return redirect()->route('masterdata.index', ['size_page' => $page])->with('success', 'Ukuran berhasil diperbarui.');
     }
 
     public function destroySize(Size $size)
@@ -86,7 +101,8 @@ class MasterDataController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.index')->with('success', 'Kategori berhasil diperbarui.');
+        $page = session('masterdata_category_page', 1);
+        return redirect()->route('masterdata.index', ['category_page' => $page])->with('success', 'Kategori berhasil diperbarui.');
     }
 
     public function destroyCategory(Category $category)
@@ -126,7 +142,8 @@ class MasterDataController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.index')->with('success', 'Lantai berhasil diperbarui.');
+        $page = session('masterdata_floor_page', 1);
+        return redirect()->route('masterdata.index', ['floor_page' => $page])->with('success', 'Lantai berhasil diperbarui.');
     }
 
     public function destroyFloor(Floor $floor)
@@ -206,7 +223,8 @@ class MasterDataController extends Controller
             'min_stock' => $request->min_stock,
         ]);
 
-        return redirect()->route('masterdata.index')->with('success', 'Barang berhasil diperbarui.');
+        $page = session('masterdata_product_page', 1);
+        return redirect()->route('masterdata.index', ['product_page' => $page])->with('success', 'Barang berhasil diperbarui.');
     }
 
     public function destroyProduct(Product $product)

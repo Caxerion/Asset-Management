@@ -20,7 +20,14 @@ class StockController extends Controller
                   ->orWhereHas('category', fn($c) => $c->where('name','like',"%$q%"));
         }
 
-        $products = $query->paginate(6);
+        // Get page from session or URL, default to 1
+        $page = $request->page ?? session('stock_page', 1);
+        
+        $products = $query->paginate(6, ['*'], 'page', $page);
+        
+        // Store current page in session
+        session(['stock_page' => $products->currentPage()]);
+        
         $floors = Floor::all();
 
         return view('stock.index', compact('products', 'floors'));
@@ -53,7 +60,9 @@ class StockController extends Controller
         $stockBalance->qty_on_hand = ($stockBalance->qty_on_hand ?? 0) + $request->qty;
         $stockBalance->save();
 
-        return redirect()->route('stock.index')->with('success','Stock berhasil ditambahkan.');
+        // Preserve pagination when redirecting
+        $page = session('stock_page', 1);
+        return redirect()->route('stock.index', ['page' => $page])->with('success','Stock berhasil ditambahkan.');
     }
 
     // Detail barang - redirect to stock index (view not implemented)
@@ -85,6 +94,8 @@ class StockController extends Controller
         $stockBalance->qty_on_hand = ($stockBalance->qty_on_hand ?? 0) + $request->qty;
         $stockBalance->save();
 
-        return redirect()->route('stock.index')->with('success','Stock berhasil ditambahkan.');
+        // Preserve pagination when redirecting
+        $page = session('stock_page', 1);
+        return redirect()->route('stock.index', ['page' => $page])->with('success','Stock berhasil ditambahkan.');
     }
 }

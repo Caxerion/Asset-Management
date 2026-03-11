@@ -8,6 +8,32 @@
     <link rel="stylesheet" href="assets/fontsAwesome/css/all.min.css">
     
     <style>
+        .table {
+            border-radius: 25px;
+            overflow: hidden;
+        }
+        
+        /* Nav tabs hover and active states */
+        .nav-tabs {
+            border-bottom: none !important;
+        }
+        .nav-tabs .nav-link {
+            margin-inline: 5px;
+        }
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link.active {
+            background-color: #05445E !important;
+            color: white !important;
+            border-color: #05445E !important;
+            border-radius: 10px;
+        }
+        
+        /* Table header styling */
+        .card-header {
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+        }
+        
         .pagination-wrapper {
             text-align: center;
             margin-top: 20px;
@@ -149,9 +175,9 @@
         }
     </style>
 </head>
-<!-- <body style="background-color: #e2d8fe;"> -->
+<body style="background-color: #eae8f0;">
     {{-- Header atas --}}
-    <nav class="navbar navbar-expand-lg" style="background-color: #c7cacf;">
+    <nav class="navbar navbar-expand-lg" style="background-color: #b4b3b6; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
                 <img src="/assets/img/logo-RE.png" alt="logo" class="d-inline-block align-text-top ms-4" width="40" height="50">
@@ -168,18 +194,19 @@
     </nav>
 
     {{-- Navbar bawah untuk menu utama --}}
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white" style="box-shadow: 0 2px 10px rgba(0,0,0,0.25);">
         <div class="container-fluid ms-4">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" style="color: #05445E;
+            " id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item me">
-                        <a class="nav-link px-2 {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"  style="color:midnightblue;"><i class="fa fa-home"></i>Dashboard</a>
+                        <a class="nav-link px-2 {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"  style="color:#05445E;"><i class="fa fa-home"></i>Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:midnightblue;">
+                        <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #05445E;">
                        <i class="fa fa-clipboard-list"></i>Persediaan
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="persediaanDropdown">
@@ -188,7 +215,7 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-2" href="#" id="masterdataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:midnightblue;">
+                        <a class="nav-link dropdown-toggle px-2" href="#" id="masterdataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #05445E;">
                             <i class="fa fa-database"></i>Master Data
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="masterdataDropdown">

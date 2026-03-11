@@ -10,9 +10,11 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $people = Person::paginate(10);
+        $page = $request->page ?? session('person_page', 1);
+        $people = Person::paginate(10, ['*'], 'page', $page);
+        session(['person_page' => $people->currentPage()]);
         return view('masterdata.person', compact('people'));
     }
 
@@ -38,7 +40,8 @@ class PersonController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('person.index')->with('success', 'Data orang berhasil ditambahkan!');
+        $page = session('person_page', 1);
+        return redirect()->route('person.index', ['page' => $page])->with('success', 'Data orang berhasil ditambahkan!');
     }
 
     /**
@@ -73,6 +76,7 @@ class PersonController extends Controller
         $person = Person::findOrFail($id);
         $person->delete();
 
-        return redirect()->route('person.index')->with('success', 'Data orang berhasil dihapus!');
+        $page = session('person_page', 1);
+        return redirect()->route('person.index', ['page' => $page])->with('success', 'Data orang berhasil dihapus!');
     }
 }

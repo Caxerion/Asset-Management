@@ -100,7 +100,6 @@ Route::middleware('auth')->group(function () {
         // Stock management - full access (except index/show which are already defined above)
         Route::resource('stock', StockController::class)->except(['index', 'show']);
         Route::post('/stock/{id}/add', [StockController::class, 'add'])->name('stock.add');
-        Route::post('/stock/reset', [StockController::class, 'reset'])->name('stock.reset');
         
         // Persediaan - full access (except index/show which are already defined above)
         Route::resource('persediaan', PersediaanController::class)->except(['index', 'show']);

@@ -10,9 +10,11 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::paginate(7);
+        $page = $request->page ?? session('kategori_page', 1);
+        $categories = Category::paginate(7, ['*'], 'page', $page);
+        session(['kategori_page' => $categories->currentPage()]);
         return view('masterdata.kategori', compact('categories'));
     }
 
@@ -30,7 +32,8 @@ class CategoryController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('masterdata.kategori.index')->with('success', 'Kategori berhasil ditambahkan.');
+        $page = session('kategori_page', 1);
+        return redirect()->route('masterdata.kategori.index', ['page' => $page])->with('success', 'Kategori berhasil ditambahkan.');
     }
 
     /**
@@ -46,7 +49,8 @@ class CategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('masterdata.kategori.index')->with('success', 'Kategori berhasil diperbarui.');
+        $page = session('kategori_page', 1);
+        return redirect()->route('masterdata.kategori.index', ['page' => $page])->with('success', 'Kategori berhasil diperbarui.');
     }
 
     /**
@@ -56,11 +60,13 @@ class CategoryController extends Controller
     {
         // Check if category has products
         if ($category->products()->count() > 0) {
-            return redirect()->route('masterdata.kategori.index')->with('error', 'Kategori tidak dapat dihapus karena masih memiliki produk.');
+            $page = session('kategori_page', 1);
+            return redirect()->route('masterdata.kategori.index', ['page' => $page])->with('error', 'Kategori tidak dapat dihapus karena masih memiliki produk.');
         }
 
         $category->delete();
 
-        return redirect()->route('masterdata.kategori.index')->with('success', 'Kategori berhasil dihapus.');
+        $page = session('kategori_page', 1);
+        return redirect()->route('masterdata.kategori.index', ['page' => $page])->with('success', 'Kategori berhasil dihapus.');
     }
 }
