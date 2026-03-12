@@ -84,12 +84,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Check if product has stock balances
-        if ($product->stockBalances()->count() > 0) {
-            $page = session('produk_page', 1);
-            return redirect()->route('masterdata.produk.index', ['page' => $page])->with('error', 'Barang tidak dapat dihapus karena masih memiliki stock balance.');
-        }
-
         $product->delete();
         $page = session('produk_page', 1);
         return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil dihapus');

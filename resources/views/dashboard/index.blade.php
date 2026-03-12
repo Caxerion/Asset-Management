@@ -19,10 +19,12 @@
     }
     .hero-content{
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: space-evenly;
+        justify-content: center;
         width: 100%;
         min-height: 100%;
+        padding: 2rem;
     }
     .hero-text{
         display: flex;
@@ -35,16 +37,347 @@
         font-size: 10px;
         text-align: center;
     }
+    
+    /* Toggle Button */
+    .toggle-stats-btn {
+        margin-top: 1rem;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .toggle-stats-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    .toggle-stats-btn i {
+        margin-right: 8px;
+        transition: transform 0.3s ease;
+    }
+    .toggle-stats-btn.active i {
+        transform: rotate(180deg);
+    }
+    
+    /* Home Section - slides out to left */
+    .home-section {
+        transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        transform: translateX(0);
+        opacity: 1;
+    }
+    .home-section.hidden {
+        transform: translateX(-100%);
+        opacity: 0;
+        position: absolute;
+    }
+    
+    /* Stats Section - slides in from right */
+    .stats-section {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(
+            rgba(195, 194, 194, 0.4),
+            rgba(245, 245, 245, 0.325)
+        ),url(/assets/img/grahare.jpg);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        transform: translateX(100%);
+        transition: transform 0.5s ease-in-out;
+        z-index: 100;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .stats-section.show {
+        transform: translateX(0);
+    }
+    .stats-content {
+        padding: 80px 2rem 2rem 2rem;
+        background: rgba(255, 255, 255, 0.9);
+        min-height: 100%;
+    }
+    
+    /* Close button for stats */
+    .close-stats-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 101;
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .close-stats-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    /* Chart sizing */
+    #categoryPieChart {
+        max-width: 300px;
+        max-height: 300px;
+        margin: 0 auto;
+    }
+    #periodBarChart {
+        max-height: 300px;
+    }
 </style>
 @section('content')
-<div class="hero">
+<!-- Home Section -->
+<div class="hero home-section" id="homeSection">
     <div class="hero-content">
         <div class="hero-text">
             <h1>Selamat Datang di Dashboard</h1>
             <p class="second-text">Silakan pilih menu dari navigasi di atas.</p>
+            
+            <!-- Toggle Button -->
+            <button class="toggle-stats-btn" id="toggleStatsBtn" onclick="toggleStats()">
+                <i class="fas fa-chevron-down"></i> Lihat Statistik
+            </button>
         </div>
     </div>
 </div>
-@endsection
 
+<!-- Stats Section (slides in from right) -->
+<div class="stats-section" id="statsSection">
+    <button class="close-stats-btn" onclick="toggleStats()">
+        <i class="fas fa-times"></i> Tutup
+    </button>
+    
+    <div class="stats-content">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">Statistik Pengambilan</h2>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Produk</h5>
+                            <h2 class="mb-0">{{ $totalProduk }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Stok</h5>
+                            <h2 class="mb-0">{{ $totalStok }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-4">
+                <!-- Pie Chart: Pickups by Category -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Pengambilan per Kategori</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bar Chart: Pickups by Period -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Pengambilan per Periode</h5>
+                            <select id="periodSelector" class="form-select form-select-sm" style="width: auto;" onchange="updateBarChart(this.value)">
+                                <option value="daily">Harian</option>
+                                <option value="weekly">Mingguan</option>
+                                <option value="monthly" selected>Bulanan</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="periodBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Pickups -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Riwayat Pengambilan Terbaru</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No. Pengambilan</th>
+                                            <th>Tanggal</th>
+                                            <th>Peminta</th>
+                                            <th>Lantai</th>
+                                            <th>Produk</th>
+                                            <th>Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($recentPickups as $pickupLine)
+                                        <tr>
+                                            <td>{{ $pickupLine->pickup->pickup_no ?? '-' }}</td>
+                                            <td>{{ $pickupLine->pickup->pickup_date ?? '-' }}</td>
+                                            <td>{{ $pickupLine->pickup->user->name ?? '-' }}</td>
+                                            <td>{{ $pickupLine->pickup->floor->name ?? '-' }}</td>
+                                            <td>{{ $pickupLine->product->name ?? '-' }}</td>
+                                            <td>{{ $pickupLine->qty }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center">Tidak ada data pengambilan</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    let chartsLoaded = false;
+    
+    function toggleStats() {
+        const homeSection = document.getElementById('homeSection');
+        const statsSection = document.getElementById('statsSection');
+        const btn = document.getElementById('toggleStatsBtn');
+        
+        // Toggle visibility
+        if (statsSection.classList.contains('show')) {
+            statsSection.classList.remove('show');
+            homeSection.classList.remove('hidden');
+            if (btn) btn.classList.remove('active');
+        } else {
+            homeSection.classList.add('hidden');
+            statsSection.classList.add('show');
+            if (btn) btn.classList.add('active');
+            
+            // Load charts when first opened
+            if (!chartsLoaded) {
+                loadCharts();
+                chartsLoaded = true;
+            }
+        }
+    }
+    
+    function loadCharts() {
+        // Pie Chart - Pickups by Category with custom colors
+        fetch('/dashboard/pickups-by-category')
+            .then(res => res.json())
+            .then(data => {
+                // Map category names to specific colors
+                const colorMap = {
+                    'Produk Pembersih': '#FF0000',        // Red
+                    'Pengharum & Pewangi': '#28a745',    // Green
+                    'Alat Kebersihan': '#0d6efd',        // Blue
+                    'Kain & Lap': '#ffc107',             // Yellow
+                    'Perlengkapan Proteksi': '#6f42c1',   // Purple
+                    'Perlatan & Lain-lain': '#fd7e14',    // Orange
+                    'Plastik & Kemasan': '#6f42c1'       // Purple
+                };
+                
+                const backgroundColor = data.labels.map(label => colorMap[label] || '#999999');
+                
+                new Chart(document.getElementById('categoryPieChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: backgroundColor
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(err => console.error('Error loading pie chart:', err));
+
+        // Initialize bar chart with default (monthly)
+        updateBarChart('monthly');
+    }
+
+    // Bar Chart - Pickups by Period
+    let barChart;
+
+    function updateBarChart(period) {
+        fetch(`/dashboard/pickups-by-period?period=${period}`)
+            .then(res => res.json())
+            .then(data => {
+                const ctx = document.getElementById('periodBarChart');
+                
+                if (barChart) {
+                    barChart.destroy();
+                }
+                
+                barChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Jumlah Pengambilan',
+                            data: data.values,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: '#36A2EB',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(err => console.error('Error loading bar chart:', err));
+    }
+</script>
+@endsection
 

@@ -14,6 +14,18 @@ class Product extends Model
         'unit', 'min_stock', 'is_active'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::deleting(function ($product) {
+            // Delete related stock balances
+            $product->stockBalances()->delete();
+            // Delete related inventory transactions
+            $product->inventoryTransactions()->delete();
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -32,6 +44,11 @@ class Product extends Model
     public function stockBalances()
     {
         return $this->hasMany(StockBalance::class);
+    }
+
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
     }
 
     // Accessor for stock_balance attribute used in views - shows total stock across all floors

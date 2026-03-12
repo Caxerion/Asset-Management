@@ -16,6 +16,8 @@ use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\PersonController;
 
+Route::get('/dashboard/pickups-by-category', [DashboardController::class, 'getPickupsByCategory']);
+Route::get('/dashboard/pickups-by-period', [DashboardController::class, 'getPickupsByPeriod']);
 
 Route::get('/', function () {
     return view('welcome');

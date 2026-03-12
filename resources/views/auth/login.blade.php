@@ -18,7 +18,7 @@
             <div class="card login-box">
 
                 <div class="center">
-                    <img src="{{ asset('images/RE.png') }}" height="50">
+                    <img src="{{ asset('public/assets/img/RE.png') }}" height="50">
 
                     <h5 class="login-title">Welcome Back! 👋</h5>
                     <p class="login-subtitle">Please sign-in to your account</p>
