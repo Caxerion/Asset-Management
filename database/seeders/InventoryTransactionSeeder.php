@@ -9,18 +9,24 @@ class InventoryTransactionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Check if products exist first
-        $productCount = DB::table('products')->count();
-        if ($productCount < 2) {
-            return; // Skip if not enough products
+        // Get existing product and floor IDs
+        $products = DB::table('products')->pluck('id');
+        $floors = DB::table('floors')->pluck('id');
+        
+        if ($products->isEmpty() || $floors->isEmpty()) {
+            return; // Skip if no products or floors
         }
+        
+        $product1 = $products->first();
+        $product2 = $products->get(1, $products->first());
+        $floor = $floors->first();
         
         DB::table('inventory_transactions')->insert([
             [
                 'trans_at' => now(),
                 'trans_type' => 'IN',
-                'product_id' => 1,
-                'floor_id' => 1,
+                'product_id' => $product1,
+                'floor_id' => $floor,
                 'quantity' => 100,
                 'unit_price' => 15000,
                 'currency_code' => 'IDR',
@@ -31,8 +37,8 @@ class InventoryTransactionSeeder extends Seeder
             [
                 'trans_at' => now(),
                 'trans_type' => 'IN',
-                'product_id' => 2,
-                'floor_id' => 1,
+                'product_id' => $product2,
+                'floor_id' => $floor,
                 'quantity' => 200,
                 'unit_price' => 3000,
                 'currency_code' => 'IDR',
