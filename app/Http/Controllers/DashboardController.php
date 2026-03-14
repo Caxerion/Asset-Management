@@ -9,11 +9,11 @@ use App\Models\Pickup;
 use App\Models\PickupLine;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Illuminate\Routing\Controller;;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Ringkasan data
         $totalProduk = Product::count();
@@ -23,15 +23,17 @@ class DashboardController extends Controller
         $totalUser = User::count();
         $totalPerson = Person::count(); // Assuming totalPerson is the same as totalUser
 
-        // Histori pengambilan terbaru (10 terakhir)
+        // Histori pengambilan terbaru (paginated - 10 per page)
         $recentPickups = PickupLine::with([
                 'pickup.user',   // relasi ke user
                 'pickup.floor',  // relasi ke lantai
                 'product'        // relasi ke barang
             ])
             ->latest()
-            ->take(10)
-            ->get();
+            ->paginate(10);
+
+        // Check if stats should be shown (for direct access via ?statistik)
+        $showStats = $request->has('statistik');
 
         // Kirim data ke view dashboard
         return view('dashboard.index', compact(
@@ -41,7 +43,8 @@ class DashboardController extends Controller
             'totalUser',
             'totalPerson',
             'avgStok',
-            'recentPickups'
+            'recentPickups',
+            'showStats'
         ));
     }
 

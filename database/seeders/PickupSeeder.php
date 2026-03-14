@@ -9,11 +9,18 @@ use App\Models\Floor;
 use App\Models\User;
 use App\Models\Person;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PickupSeeder extends Seeder
 {
     public function run()
     {
+        // Clear existing pickups and pickup_lines to avoid duplicate errors
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        PickupLine::truncate();
+        Pickup::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // Get existing users, floors, products, and people
         $users = User::all();
         $floors = Floor::all();
@@ -42,7 +49,7 @@ class PickupSeeder extends Seeder
                 'created_by' => $user->id,
                 'updated_by' => $user->id,
             ]);
-
+            
             // Create 1-3 PickupLines (items)
             $productCount = $products->count();
             if ($productCount === 0) {

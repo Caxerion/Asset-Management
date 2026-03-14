@@ -37,7 +37,7 @@ class InventoryTransactionSeeder extends Seeder
             [
                 'trans_at' => now(),
                 'trans_type' => 'IN',
-                'product_id' => $product2,
+                  'product_id' => $product2,
                 'floor_id' => $floor,
                 'quantity' => 200,
                 'unit_price' => 3000,

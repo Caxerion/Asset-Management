@@ -25,7 +25,6 @@ class FloorController extends Controller
         if (!in_array($sortField, $allowedFields)) {
             $sortField = 'id';
         }
-        
         $page = $request->page ?? session('lantai_page', 1);
         
         // Build query with count subqueries

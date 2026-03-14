@@ -96,23 +96,7 @@
             
             @if($floors->hasPages())
             <div class="pagination-wrapper mt-3">
-                @if($floors->onFirstPage())
-                <span class="page-link disabled">‹</span>
-                @else
-                <a href="{{ $floors->previousPageUrl() }}" class="page-link">‹</a>
-                @endif
-                @foreach($floors->getUrlRange(1, $floors->lastPage()) as $page => $url)
-                @if($page == $floors->currentPage())
-                <span class="page-link active">{{ $page }}</span>
-                @else
-                <a href="{{ $url }}" class="page-link">{{ $page }}</a>
-                @endif
-                @endforeach
-                @if($floors->hasMorePages())
-                <a href="{{ $floors->nextPageUrl() }}" class="page-link">›</a>
-                @else
-                <span class="page-link disabled">›</span>
-                @endif
+                {{ $floors->links('components.custom-pagination') }}
             </div>
             <div class="pagination-info">Menampilkan {{ $floors->firstItem() }} sampai {{ $floors->lastItem() }} dari {{ $floors->total() }} data</div>
             @endif

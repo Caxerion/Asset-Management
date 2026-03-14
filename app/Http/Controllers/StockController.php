@@ -34,28 +34,6 @@ class StockController extends Controller
             });
         }
 
-        // Apply sorting
-        $allowedFields = ['id', 'name', 'category', 'size', 'stock'];
-        if (!in_array($sortField, $allowedFields)) {
-            $sortField = 'name';
-        }
-
-        if ($sortField === 'category') {
-            $query->join('categories', 'products.category_id', '=', 'categories.id')
-                  ->orderBy('categories.name', $sortDirection)
-                  ->select('products.*');
-        } elseif ($sortField === 'size') {
-            $query->join('sizes', 'products.size_id', '=', 'sizes.id')
-                  ->orderBy('sizes.name', $sortDirection)
-                  ->select('products.*');
-        } elseif ($sortField === 'stock') {
-            $query->leftJoin('stock_balances', 'products.id', '=', 'stock_balances.product_id')
-                  ->orderBy('stock_balances.qty_on_hand', $sortDirection)
-                  ->select('products.*');
-        } else {
-            $query->orderBy('products.' . $sortField, $sortDirection);
-        }
-
         // Get page from session or URL, default to 1
         $page = $request->page ?? session('stock_page', 1);
         
