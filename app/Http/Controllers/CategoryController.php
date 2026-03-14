@@ -11,11 +11,25 @@ class CategoryController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
+    {   
+        $sortField = $request->sort ?? 'id';
+        $sortDirection = $request->direction ?? 'asc';
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Validate sort field
+        $allowedFields = ['id', 'name', 'is_active', 'created_at'];
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'id';
+        }
+
         $page = $request->page ?? session('kategori_page', 1);
-        $categories = Category::paginate(7, ['*'], 'page', $page);
+        $categories = Category::orderBy($sortField, $sortDirection)->paginate(7, ['*'], 'page', $page);
         session(['kategori_page' => $categories->currentPage()]);
-        return view('masterdata.kategori', compact('categories'));
+        return view('masterdata.kategori', compact('categories', 'sortField', 'sortDirection'));
     }
 
     /**

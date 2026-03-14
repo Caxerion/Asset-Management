@@ -8,24 +8,46 @@
                 <a href="{{ $paginator->previousPageUrl() }}" class="page-link">‹</a>
             @endif
 
-            {{-- Pagination Elements --}}
-            @foreach ($elements as $element)
-                {{-- "Three Dots" Separator --}}
-                @if (is_string($element))
-                    <span class="page-link dots">{{ $element }}</span>
+            {{-- Pagination Elements (limited to 3 pages) --}}
+            @php
+                $currentPage = $paginator->currentPage();
+                $lastPage = $paginator->lastPage();
+                $maxPagesToShow = 3;
+                
+                // Calculate the range of pages to show
+                $startPage = max(1, $currentPage - floor($maxPagesToShow / 2));
+                $endPage = min($lastPage, $startPage + $maxPagesToShow - 1);
+                
+                // Adjust if we're at the end
+                if ($endPage - $startPage + 1 < $maxPagesToShow) {
+                    $startPage = max(1, $endPage - $maxPagesToShow + 1);
+                }
+            @endphp
+            
+            {{-- Show first page and ellipsis if needed --}}
+            @if ($startPage > 1)
+                <a href="{{ $paginator->url(1) }}" class="page-link">1</a>
+                @if ($startPage > 2)
+                    <span class="page-link dots">...</span>
                 @endif
-
-                {{-- Array Of Links --}}
-                @if (is_array($element))
-                    @foreach ($element as $page => $url)
-                        @if ($page == $paginator->currentPage())
-                            <span class="page-link active">{{ $page }}</span>
-                        @else
-                            <a href="{{ $url }}" class="page-link">{{ $page }}</a>
-                        @endif
-                    @endforeach
+            @endif
+            
+            {{-- Show the 3 pages --}}
+            @for ($i = $startPage; $i <= $endPage; $i++)
+                @if ($i == $currentPage)
+                    <span class="page-link active">{{ $i }}</span>
+                @else
+                    <a href="{{ $paginator->url($i) }}" class="page-link">{{ $i }}</a>
                 @endif
-            @endforeach
+            @endfor
+            
+            {{-- Show last page and ellipsis if needed --}}
+            @if ($endPage < $lastPage)
+                @if ($endPage < $lastPage - 1)
+                    <span class="page-link dots">...</span>
+                @endif
+                <a href="{{ $paginator->url($lastPage) }}" class="page-link">{{ $lastPage }}</a>
+            @endif
 
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())

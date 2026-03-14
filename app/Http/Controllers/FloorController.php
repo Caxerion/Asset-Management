@@ -12,6 +12,19 @@ class FloorController extends Controller
      */
     public function index(Request $request)
     {
+        $sortField = $request->sort ?? 'id';
+        $sortDirection = $request->direction ?? 'asc';
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Validate sort field
+        $allowedFields = ['id', 'name', 'is_active', 'created_at', 'stock_balance_count', 'pickup_count'];
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'id';
+        }
         $page = $request->page ?? session('lantai_page', 1);
         $floors = Floor::paginate(7, ['*'], 'page', $page);
         session(['lantai_page' => $floors->currentPage()]);

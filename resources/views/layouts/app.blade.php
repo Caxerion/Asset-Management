@@ -263,7 +263,7 @@
             </div>
         </div>
         <div class="footer-credit">
-            <p>&copy; {{ date('Y') }} Stock Barang & Obat. All rights reserved.</p>
+            <p>Copyright &copy; {{ date('Y') }} PTRE. All rights reserved.</p>
         </div>
     </footer>
     @endif

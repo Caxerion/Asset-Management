@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     {{-- Pagination --}}
     <div class="mt-3">
-        {{ $pickups->links() }}
+        {{ $pickups->links('components.custom-pagination') }}
     </div>
 </div>
 

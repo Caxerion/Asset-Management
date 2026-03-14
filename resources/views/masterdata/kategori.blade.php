@@ -89,23 +89,7 @@
             
             @if($categories->hasPages())
             <div class="pagination-wrapper mt-3">
-                @if($categories->onFirstPage())
-                <span class="page-link disabled">‹</span>
-                @else
-                <a href="{{ $categories->previousPageUrl() }}" class="page-link">‹</a>
-                @endif
-                @foreach($categories->getUrlRange(1, $categories->lastPage()) as $page => $url)
-                @if($page == $categories->currentPage())
-                <span class="page-link active">{{ $page }}</span>
-                @else
-                <a href="{{ $url }}" class="page-link">{{ $page }}</a>
-                @endif
-                @endforeach
-                @if($categories->hasMorePages())
-                <a href="{{ $categories->nextPageUrl() }}" class="page-link">›</a>
-                @else
-                <span class="page-link disabled">›</span>
-                @endif
+                {{ $categories->links('components.custom-pagination') }}
             </div>
             <div class="pagination-info">Menampilkan {{ $categories->firstItem() }} sampai {{ $categories->lastItem() }} dari {{ $categories->total() }} data</div>
             @endif

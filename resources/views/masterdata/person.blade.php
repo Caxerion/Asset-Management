@@ -56,7 +56,7 @@
                 </tbody>
             </table>
 
-            {{ $people->links() }}
+            {{ $people->links('components.custom-pagination') }}
         </div>
     </div>
 </div>

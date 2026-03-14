@@ -161,25 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {{-- Pagination inside table --}}
             @if($products->hasPages())
             <div class="pagination-wrapper mt-3">
-                @if($products->onFirstPage())
-                    <span class="page-link disabled">‹</span>
-                @else
-                    <a href="{{ $products->previousPageUrl() }}" class="page-link">‹</a>
-                @endif
-
-                @foreach($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-                    @if($page == $products->currentPage())
-                        <span class="page-link active">{{ $page }}</span>
-                    @else
-                        <a href="{{ $url }}" class="page-link">{{ $page }}</a>
-                    @endif
-                @endforeach
-
-                @if($products->hasMorePages())
-                    <a href="{{ $products->nextPageUrl() }}" class="page-link">›</a>
-                @else
-                    <span class="page-link disabled">›</span>
-                @endif
+                {{ $products->links('components.custom-pagination') }}
             </div>
             <div class="pagination-info">Menampilkan {{ $products->firstItem() }} sampai {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
             @endif

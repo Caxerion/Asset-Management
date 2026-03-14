@@ -75,28 +75,14 @@
         position: absolute;
     }
     
-    /* Stats Section - slides in from right */
+    /* Stats Section - displayed as standalone page */
     .stats-section {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: linear-gradient(
-            rgba(195, 194, 194, 0.4),
-            rgba(245, 245, 245, 0.325)
-        ),url(/assets/img/grahare.jpg);
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        transform: translateX(100%);
-        transition: transform 0.5s ease-in-out;
-        z-index: 100;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        min-height: calc(100vh - 60px);
     }
-    .stats-section.show {
-        transform: translateX(0);
+    .stats-content {
+        padding: 0;
     }
     .stats-content {
         padding: 80px 2rem 2rem 2rem;
@@ -135,7 +121,8 @@
     }
 </style>
 @section('content')
-<!-- Home Section -->
+<!-- Home Section (only shown when no statistik parameter) -->
+@if(!isset($showStats) || !$showStats)
 <div class="hero home-section" id="homeSection">
     <div class="hero-content">
         <div class="hero-text">
@@ -143,20 +130,23 @@
             <p class="second-text">Silakan pilih menu dari navigasi di atas.</p>
             
             <!-- Toggle Button -->
-            <button class="toggle-stats-btn" id="toggleStatsBtn" onclick="toggleStats()">
+            <a href="{{ route('dashboard') }}?statistik" class="toggle-stats-btn">
                 <i class="fas fa-chevron-down"></i> Lihat Statistik
-            </button>
+            </a>
         </div>
     </div>
 </div>
+@endif
 
-<!-- Stats Section (slides in from right) -->
+<!-- Stats Section (only shown when statistik parameter is present) -->
+@if(isset($showStats) && $showStats)
 <div class="stats-section" id="statsSection">
-    <button class="close-stats-btn" onclick="toggleStats()">
-        <i class="fas fa-times"></i> Tutup
-    </button>
-    
     <div class="stats-content">
+        <div class="mb-3">
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-12">
@@ -254,6 +244,13 @@
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            <!-- Pagination -->
+                            @if($recentPickups->hasPages())
+                            <div class="mt-3">
+                                {{ $recentPickups->links('components.custom-pagination') }}
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -261,6 +258,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -270,28 +268,16 @@
 <script>
     let chartsLoaded = false;
     
-    function toggleStats() {
-        const homeSection = document.getElementById('homeSection');
-        const statsSection = document.getElementById('statsSection');
-        const btn = document.getElementById('toggleStatsBtn');
-        
-        // Toggle visibility
-        if (statsSection.classList.contains('show')) {
-            statsSection.classList.remove('show');
-            homeSection.classList.remove('hidden');
-            if (btn) btn.classList.remove('active');
-        } else {
-            homeSection.classList.add('hidden');
-            statsSection.classList.add('show');
-            if (btn) btn.classList.add('active');
-            
-            // Load charts when first opened
+    // Auto-open stats section if ?statistik parameter is present
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(isset($showStats) && $showStats)
+            // Load charts when stats section is shown
             if (!chartsLoaded) {
                 loadCharts();
                 chartsLoaded = true;
             }
-        }
-    }
+        @endif
+    });
     
     function loadCharts() {
         // Pie Chart - Pickups by Category with custom colors
