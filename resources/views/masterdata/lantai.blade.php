@@ -23,9 +23,20 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Lantai</th>
-                        <th>Jumlah Stock Balance</th>
-                        <th>Jumlah Pickup</th>
+                        <th><a class="sort-link" href="{{ route('masterdata.lantai.index', [
+                        'sort' => 'name',
+                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $floors->currentPage()]) }}">
+                        Nama Lantai {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a href="{{ route('masterdata.lantai.index', ['sort' => 'stock_balance_count', 'direction' => ($sortField === 'stock_balance_count' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $floors->currentPage()]) }}">
+                        Jumlah Stok Balance
+                        {!! $sortField === 'stock_balance_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a> </th>
+                        <th><a href="{{ route('masterdata.lantai.index', ['sort' => 'pickup_count', 'direction' => ($sortField === 'pickup_count' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $floors->currentPage()]) }}">
+                        Jumlah Pickup
+                        {!! $sortField === 'pickup_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a> </th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

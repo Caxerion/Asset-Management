@@ -14,13 +14,34 @@
     @endif
 
     <div class="card">
+        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+            <form method="GET" action="{{ route('person.index') }}" class="d-flex gap-2">
+                <input type="text" name="q" placeholder="Cari Nama CS..." 
+                       class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;" value="{{ request('q') }}">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
+                @if(request('q'))
+                    <a href="{{ route('person.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
+                @endif
+            </form>
+        </div>
+    <div class="card">
         <div class="card-body">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Orang</th>
-                        <th>Status</th>
+                        <th><a class="sort-link" href="{{ route('person.index', [
+                        'sort' => 'name',
+                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $people->currentPage()]) }}">
+                        Nama CS {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('person.index', [
+                        'sort' => 'is_active',
+                        'direction' => ($sortField === 'is_active' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $people->currentPage()]) }}">
+                        Status {!! $sortField === 'is_active' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

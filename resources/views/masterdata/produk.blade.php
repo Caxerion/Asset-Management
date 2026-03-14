@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-box" style="margin-right: 8px;"></i>Data Produk</h2>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
@@ -17,19 +18,65 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
+
+    <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+        <form method="GET" action="{{ route('masterdata.produk.index') }}" class="d-flex gap-2">
+            <input type="text" name="q" placeholder="Cari Nama Produk..." 
+                    class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;" value="{{ request('q') }}">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
+            @if(request('q'))
+                <a href="{{ route('masterdata.produk.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
+            @endif
+        </form>
+    </div>
+
+
     <div class="card">
         <div class="card-body">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>SKU</th>
-                        <th>Nama Produk</th>
-                        <th>Kategori</th>
-                        <th>Ukuran</th>
-                        <th>Unit</th>
-                        <th>Min Stock</th>
-                        <th>Status</th>
+                        <th><a href="{{ route('masterdata.produk.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $products->currentPage()]) }}">
+                        SKU
+                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a> </th>
+                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
+                        'sort' => 'name',
+                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $products->currentPage()]) }}">
+                        Nama {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
+                        'sort' => 'category_id',
+                        'direction' => ($sortField === 'category_id' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $products->currentPage()]) }}">
+                        Kategori {!! $sortField === 'category_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
+                        'sort' => 'size_id',
+                        'direction' => ($sortField === 'size_id' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $products->currentPage()]) }}">
+                        Ukuran {!! $sortField === 'size_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
+                        'sort' => 'unit',
+                        'direction' => ($sortField === 'unit' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $products->currentPage()]) }}">
+                        Unit {!! $sortField === 'unit' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
+                        'sort' => 'min_stock',
+                        'direction' => ($sortField === 'min_stock' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $products->currentPage()]) }}">
+                        Min Stock {!! $sortField === 'min_stock' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
+                        'sort' => 'is_active',
+                        'direction' => ($sortField === 'is_active' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $products->currentPage()]) }}">
+                        Status {!! $sortField === 'is_active' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

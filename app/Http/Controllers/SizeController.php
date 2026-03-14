@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class SizeController extends Controller
 {
@@ -11,11 +12,25 @@ class SizeController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
+    {   
+        $sortField = $request->sort ?? 'id';
+        $sortDirection = $request->direction ?? 'asc';
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Validate sort field
+        $allowedFields = ['id', 'name', 'created_at'];
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'id';
+        }
+
         $page = $request->page ?? session('ukuran_page', 1);
-        $sizes = Size::paginate(7, ['*'], 'page', $page);
+        $sizes = Size::orderBy($sortField, $sortDirection)->paginate(7, ['*'], 'page', $page);
         session(['ukuran_page' => $sizes->currentPage()]);
-        return view('masterdata.ukuran', compact('sizes'));
+        return view('masterdata.ukuran', compact('sizes', 'sortField', 'sortDirection'));
     }
 
     /**

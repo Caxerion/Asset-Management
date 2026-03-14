@@ -23,8 +23,18 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Kategori</th>
-                        <th>Status</th>
+                        <th><a class="sort-link" href="{{ route('masterdata.kategori.index', [
+                        'sort' => 'name',
+                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $categories->currentPage()]) }}">
+                        Nama Kategori {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a class="sort-link" href="{{ route('masterdata.kategori.index', [
+                        'sort' => 'is_active',
+                        'direction' => ($sortField === 'is_active' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $categories->currentPage()]) }}">
+                        Status {!! $sortField === 'is_active' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
