@@ -13,8 +13,16 @@ class SizeController extends Controller
      */
     public function index(Request $request)
     {   
-        $sortField = $request->sort ?? 'id';
-        $sortDirection = $request->direction ?? 'asc';
+        // Get search query
+        $search = $request->get('search');
+        
+        // Get sorting parameters from combined field (e.g., name_asc, id_desc)
+        $sortOption = $request->get('sort', 'name_asc');
+        $sortParts = explode('_', $sortOption);
+        
+        // Last part is the direction, everything else is the field
+        $sortDirection = array_pop($sortParts);
+        $sortField = implode('_', $sortParts);
         
         // Validate sort direction
         if (!in_array($sortDirection, ['asc', 'desc'])) {
@@ -24,13 +32,21 @@ class SizeController extends Controller
         // Validate sort field
         $allowedFields = ['id', 'name', 'created_at'];
         if (!in_array($sortField, $allowedFields)) {
-            $sortField = 'id';
+            $sortField = 'name';
         }
 
         $page = $request->page ?? session('ukuran_page', 1);
-        $sizes = Size::orderBy($sortField, $sortDirection)->paginate(7, ['*'], 'page', $page);
+        
+        $query = Size::orderBy($sortField, $sortDirection);
+        
+        // Apply search filter
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        
+        $sizes = $query->paginate(7, ['*'], 'page', $page);
         session(['ukuran_page' => $sizes->currentPage()]);
-        return view('masterdata.ukuran', compact('sizes', 'sortField', 'sortDirection'));
+        return view('masterdata.ukuran', compact('sizes', 'sortField', 'sortDirection', 'search'));
     }
 
     /**

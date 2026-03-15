@@ -12,8 +12,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {   
-        $sortField = $request->sort ?? 'id';
-        $sortDirection = $request->direction ?? 'asc';
+        // Get sorting parameters from combined field (e.g., name_asc, id_desc)
+        $sortOption = $request->get('sort', 'name_asc');
+        $sortParts = explode('_', $sortOption);
+        
+        // Last part is the direction, everything else is the field
+        $sortDirection = array_pop($sortParts);
+        $sortField = implode('_', $sortParts);
         
         // Validate sort direction
         if (!in_array($sortDirection, ['asc', 'desc'])) {
@@ -23,7 +28,7 @@ class CategoryController extends Controller
         // Validate sort field
         $allowedFields = ['id', 'name', 'is_active', 'created_at'];
         if (!in_array($sortField, $allowedFields)) {
-            $sortField = 'id';
+            $sortField = 'name';
         }
 
         $page = $request->page ?? session('kategori_page', 1);

@@ -1,7 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('sort', sortValue);
+            window.location.href = currentUrl.toString();
+        });
+    }
+});
+</script>
+<div class="container" style="margin-top: 40px;">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-box" style="margin-right: 8px;"></i>Data Produk</h2>
@@ -20,63 +33,30 @@
 
 
     <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
-        <form method="GET" action="{{ route('masterdata.produk.index') }}" class="d-flex gap-2">
-            <input type="text" name="q" placeholder="Cari Nama Produk..." 
-                    class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;" value="{{ request('q') }}">
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-            @if(request('q'))
-                <a href="{{ route('masterdata.produk.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-            @endif
-        </form>
+        <div class="d-flex gap-2">
+            <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 180px;">
+                <option value="name_asc" {{ $sortField === 'name' && $sortDirection === 'asc' ? 'selected' : '' }}>Nama (A-Z)</option>
+                <option value="name_desc" {{ $sortField === 'name' && $sortDirection === 'desc' ? 'selected' : '' }}>Nama (Z-A)</option>
+                <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>ID (Terlama)</option>
+                <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>ID (Terbaru)</option>
+            </select>
+        </div>
     </div>
 
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body p-3">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th><a href="{{ route('masterdata.produk.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $products->currentPage()]) }}">
-                        SKU
-                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a> </th>
-                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
-                        'sort' => 'name',
-                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $products->currentPage()]) }}">
-                        Nama {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
-                        'sort' => 'category_id',
-                        'direction' => ($sortField === 'category_id' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $products->currentPage()]) }}">
-                        Kategori {!! $sortField === 'category_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
-                        'sort' => 'size_id',
-                        'direction' => ($sortField === 'size_id' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $products->currentPage()]) }}">
-                        Ukuran {!! $sortField === 'size_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
-                        'sort' => 'unit',
-                        'direction' => ($sortField === 'unit' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $products->currentPage()]) }}">
-                        Unit {!! $sortField === 'unit' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
-                        'sort' => 'min_stock',
-                        'direction' => ($sortField === 'min_stock' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $products->currentPage()]) }}">
-                        Min Stock {!! $sortField === 'min_stock' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a class="sort-link" href="{{ route('masterdata.produk.index', [
-                        'sort' => 'is_active',
-                        'direction' => ($sortField === 'is_active' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $products->currentPage()]) }}">
-                        Status {!! $sortField === 'is_active' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
+                        <th>SKU</th>
+                        <th>Nama</th>
+                        <th>Kategori</th>
+                        <th>Ukuran</th>
+                        <th>Unit</th>
+                        <th>Min Stock</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -179,12 +159,6 @@
             <div class="pagination-info">Menampilkan {{ $products->firstItem() }} sampai {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
             @endif
         </div>
-    </div>
-
-    <div class="mt-3">
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-            <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
-        </a>
     </div>
 </div>
 

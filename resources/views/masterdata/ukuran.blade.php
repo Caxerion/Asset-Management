@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container" style="margin-top: 40px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-tape" style="margin-right: 8px;"></i>Data Ukuran</h2>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
@@ -17,22 +17,29 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
+    {{-- Search Form --}}
+    <form method="GET" action="{{ route('masterdata.ukuran.index') }}" class="mb-4">
+        <div class="input-group" style="max-width: 400px;">
+            <input type="text" name="search" class="form-control" placeholder="Cari ukuran..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-search"></i>
+            </button>
+            @if(request('search'))
+                <a href="{{ route('masterdata.ukuran.index') }}" class="btn btn-secondary">
+                    <i class="fa fa-times"></i>
+                </a>
+            @endif
+        </div>
+    </form>
+
     <div class="card">
-        <div class="card-body">
+        <div class="card-body p-3">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th><a class="sort-link" href="{{ route('masterdata.ukuran.index', [
-                        'sort' => 'name',
-                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $sizes->currentPage()]) }}">
-                        Nama Ukuran {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a href="{{ route('masterdata.ukuran.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $sizes->currentPage()]) }}">
-                        Jumlah Produk
-                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a> </th>
+                        <th>Nama Ukuran</th>
+                        <th>Jumlah Produk</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -93,15 +100,8 @@
             <div class="pagination-wrapper mt-3">
                 {{ $sizes->links('components.custom-pagination') }}
             </div>
-            <div class="pagination-info">Menampilkan {{ $sizes->firstItem() }} sampai {{ $sizes->lastItem() }} dari {{ $sizes->total() }} data</div>
             @endif
         </div>
-    </div>
-
-    <div class="mt-3">
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-            <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
-        </a>
     </div>
 </div>
 

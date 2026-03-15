@@ -1,7 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sorting dropdowns - automatic navigation on change
+    document.querySelectorAll('.sort-select').forEach(function(select) {
+        select.addEventListener('change', function() {
+            const sortValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set(this.dataset.sortParam, sortValue);
+            window.location.href = currentUrl.toString();
+        });
+    });
+});
+</script>
+<div class="container" style="margin-top: 40px;">
     <h1><i class="fa fa-database" style="margin-right: 8px;"></i>Master Data</h1>
 
     {{-- Flash Messages --}}
@@ -27,7 +40,7 @@
                 <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Kategori
             </button>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
             @if($categories->isNotEmpty())
                 <table class="table">
                     <thead>
@@ -130,7 +143,7 @@
                 <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Ukuran
             </button>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
             @if($sizes->count())
                 <table class="table">
                     <thead>
@@ -233,7 +246,7 @@
                 <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Lantai
             </button>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
             @if($floors->count())
                 <table class="table">
                     <thead>
@@ -336,7 +349,7 @@
                 <i class="fa fa-plus" style="margin-right: 4px;"></i>Tambah Barang
             </button>
         </div>
-        <div class="card-body">
+        <div class="card-body p-3">
             @if($products->count())
                 <table class="table">
                     <thead>

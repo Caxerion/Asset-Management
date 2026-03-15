@@ -12,16 +12,29 @@ class MasterDataController extends Controller
 {
     public function index(Request $request)
     {
+        // Get sorting parameters
+        $categorySort = $request->get('category_sort', 'name_asc');
+        $sizeSort = $request->get('size_sort', 'name_asc');
+        $floorSort = $request->get('floor_sort', 'name_asc');
+        $productSort = $request->get('product_sort', 'name_asc');
+
+        // Parse sort parameters
+        $categorySortParts = $this->parseSort($categorySort);
+        $sizeSortParts = $this->parseSort($sizeSort);
+        $floorSortParts = $this->parseSort($floorSort);
+        $productSortParts = $this->parseSort($productSort);
+
         // Get pages from session or URL
         $categoryPage = $request->category_page ?? session('masterdata_category_page', 1);
         $floorPage = $request->floor_page ?? session('masterdata_floor_page', 1);
         $productPage = $request->product_page ?? session('masterdata_product_page', 1);
         $sizePage = $request->size_page ?? session('masterdata_size_page', 1);
 
-        $categories = Category::paginate(10, ['*'], 'category_page', $categoryPage);
-        $floors = Floor::paginate(10, ['*'], 'floor_page', $floorPage);
-        $products = Product::with(['category', 'size'])->paginate(10, ['*'], 'product_page', $productPage);
-        $sizes = Size::paginate(10, ['*'], 'size_page', $sizePage);
+        // Query with sorting
+        $categories = Category::orderBy($categorySortParts['field'], $categorySortParts['direction'])->paginate(10, ['*'], 'category_page', $categoryPage);
+        $floors = Floor::orderBy($floorSortParts['field'], $floorSortParts['direction'])->paginate(10, ['*'], 'floor_page', $floorPage);
+        $products = Product::with(['category', 'size'])->orderBy($productSortParts['field'], $productSortParts['direction'])->paginate(10, ['*'], 'product_page', $productPage);
+        $sizes = Size::orderBy($sizeSortParts['field'], $sizeSortParts['direction'])->paginate(10, ['*'], 'size_page', $sizePage);
         
         // Store current pages in session
         session([
@@ -31,7 +44,20 @@ class MasterDataController extends Controller
             'masterdata_size_page' => $sizes->currentPage(),
         ]);
         
-        return view('masterdata.index', compact('categories', 'floors', 'products', 'sizes'));
+        return view('masterdata.index', compact('categories', 'floors', 'products', 'sizes', 'categorySort', 'sizeSort', 'floorSort', 'productSort'));
+    }
+
+    private function parseSort($sortOption)
+    {
+        $parts = explode('_', $sortOption);
+        $direction = array_pop($parts);
+        $field = implode('_', $parts);
+        
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+        
+        return ['field' => $field, 'direction' => $direction];
     }
 
     // ================== Size Methods ==================

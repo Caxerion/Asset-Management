@@ -1,12 +1,33 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('sort', sortValue);
+            window.location.href = currentUrl.toString();
+        });
+    }
+});
+</script>
+<div class="container" style="margin-top: 40px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-layer-group" style="margin-right: 8px;"></i>Data Lantai</h2>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fa fa-plus"></i> Tambah Lantai
-        </button>
+        <div class="d-flex gap-2">
+            <select name="sort" id="sortSelect" class="form-select" style="width: 200px;">
+                <option value="name_asc" {{ $sortField === 'name' && $sortDirection === 'asc' ? 'selected' : '' }}>Nama (A-Z)</option>
+                <option value="name_desc" {{ $sortField === 'name' && $sortDirection === 'desc' ? 'selected' : '' }}>Nama (Z-A)</option>
+                <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>ID (Terlama)</option>
+                <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>ID (Terbaru)</option>
+            </select>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fa fa-plus"></i> Tambah Lantai
+            </button>
+        </div>
     </div>
 
     @if (session('success'))
@@ -18,25 +39,14 @@
     @endif
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body p-3">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th><a class="sort-link" href="{{ route('masterdata.lantai.index', [
-                        'sort' => 'name',
-                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $floors->currentPage()]) }}">
-                        Nama Lantai {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a href="{{ route('masterdata.lantai.index', ['sort' => 'stock_balance_count', 'direction' => ($sortField === 'stock_balance_count' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $floors->currentPage()]) }}">
-                        Jumlah Stok Balance
-                        {!! $sortField === 'stock_balance_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a> </th>
-                        <th><a href="{{ route('masterdata.lantai.index', ['sort' => 'pickup_count', 'direction' => ($sortField === 'pickup_count' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $floors->currentPage()]) }}">
-                        Jumlah Pickup
-                        {!! $sortField === 'pickup_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a> </th>
+                        <th>Nama Lantai</th>
+                        <th>Jumlah Stok Balance</th>
+                        <th>Jumlah Pickup</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -101,12 +111,6 @@
             <div class="pagination-info">Menampilkan {{ $floors->firstItem() }} sampai {{ $floors->lastItem() }} dari {{ $floors->total() }} data</div>
             @endif
         </div>
-    </div>
-
-    <div class="mt-3">
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-            <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
-        </a>
     </div>
 </div>
 

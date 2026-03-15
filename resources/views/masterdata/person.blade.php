@@ -1,7 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('sort', sortValue);
+            window.location.href = currentUrl.toString();
+        });
+    }
+});
+</script>
+<div class="container" style="margin-top: 40px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-users" style="margin-right: 8px;"></i>Data Orang</h2>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
@@ -15,33 +28,23 @@
 
     <div class="card">
         <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
-            <form method="GET" action="{{ route('person.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari Nama CS..." 
-                       class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;" value="{{ request('q') }}">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-                @if(request('q'))
-                    <a href="{{ route('person.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                @endif
-            </form>
+            <div class="d-flex gap-2">
+                <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 180px;">
+                    <option value="name_asc" {{ $sortField === 'name' && $sortDirection === 'asc' ? 'selected' : '' }}>Nama (A-Z)</option>
+                    <option value="name_desc" {{ $sortField === 'name' && $sortDirection === 'desc' ? 'selected' : '' }}>Nama (Z-A)</option>
+                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>ID (Terlama)</option>
+                    <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>ID (Terbaru)</option>
+                </select>
+            </div>
         </div>
     <div class="card">
-        <div class="card-body">
+        <div class="card-body p-3">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th><a class="sort-link" href="{{ route('person.index', [
-                        'sort' => 'name',
-                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $people->currentPage()]) }}">
-                        Nama CS {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th><a class="sort-link" href="{{ route('person.index', [
-                        'sort' => 'is_active',
-                        'direction' => ($sortField === 'is_active' && $sortDirection === 'asc') ? 'desc' : 'asc',
-                        'page' => $people->currentPage()]) }}">
-                        Status {!! $sortField === 'is_active' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
+                        <th>Nama CS</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
