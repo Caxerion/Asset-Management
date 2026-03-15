@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Person;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class PersonController extends Controller
 {
@@ -11,11 +12,35 @@ class PersonController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
+    {   
+        $sortField = $request->sort ?? 'id';
+        $sortDirection = $request->direction ?? 'asc';
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Validate sort field
+        $allowedFields = ['id', 'name', 'is_active', 'created_at'];
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'id';
+        }
+
+        $query = Person::query();
+        
+        // Search functionality
+        if ($request->q) {
+            $q = $request->q;
+            $query->where(function($query) use ($q) {
+                $query->where('name', 'like', "%$q%");
+            });
+        }
+        
         $page = $request->page ?? session('person_page', 1);
-        $people = Person::paginate(10, ['*'], 'page', $page);
+        $people = $query->orderBy($sortField, $sortDirection)->paginate(10, ['*'], 'page', $page);
         session(['person_page' => $people->currentPage()]);
-        return view('masterdata.person', compact('people'));
+        return view('masterdata.person', compact('people', 'sortField', 'sortDirection'));
     }
 
     /**

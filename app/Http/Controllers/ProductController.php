@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class ProductController extends Controller
 {
@@ -15,11 +16,42 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $page = $request->page ?? session('produk_page', 1);
-        $products = Product::with(['category', 'size', 'stockBalances'])->paginate(7, ['*'], 'page', $page);
+        $sortField = $request->sort ?? 'id';
+        $sortDirection = $request->direction ?? 'asc';
+        
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+        
+        // Validate sort field
+        $allowedFields = ['id', 'name', 'sku', 'category_id', 'size_id', 'unit', 'min_stock', 'is_active', 'created_at'];
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'id';
+        }
+
+        $query = Product::query();
+
+        // Search functionality
+        if ($request->q) {
+            $q = $request->q;
+            $query->where(function($query) use ($q) {
+                $query->where('name', 'like', "%$q%")
+                      ->orWhere('sku', 'like', "%$q%")
+                      ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%$q%"))
+                      ->orWhereHas('size', fn($s) => $s->where('name', 'like', "%$q%"));
+            });
+        }
+        
+        
+        $products = $query->with(['category', 'size', 'stockBalances'])
+            ->orderBy($sortField, $sortDirection)
+            ->paginate(7, ['*'], 'page', $page);
         session(['produk_page' => $products->currentPage()]);
         $categories = Category::all();
         $sizes = Size::all();
-        return view('masterdata.produk', compact('products', 'categories', 'sizes'));
+        
+        return view('masterdata.produk', compact('products', 'categories', 'sizes', 'sortField', 'sortDirection'));
     }
 
     /**

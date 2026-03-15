@@ -143,6 +143,7 @@
         }
         .footer-social a{
             display: inline-flex;
+            direction: column;
             align-items: center;
             justify-content: center;
             width: 36px;

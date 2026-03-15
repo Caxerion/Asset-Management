@@ -93,11 +93,30 @@ document.addEventListener('DOMContentLoaded', function() {
             <table class="table table-bordered table-striped mb-0">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">#</th>
-                        <th class="fs-6" style="width: 195px; text-align: left;">KATEGORI BARANG</th>
-                        <th style="text-align: left;">NAMA BARANG</th>
-                        <th style="width: 180px; text-align: left;">UKURAN BARANG</th>
-                        <th class="fs-6" style="width: 160px;">STOCK TERSEDIA SAAT INI</th>
+<th style="width: 50px;"><a href="{{ route('stock.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        #
+                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a> </th>
+                        <th class="fs-6" style="width: 195px; text-align: left;"><a class="sort-link" href="{{ route('stock.index', [
+                        'sort' => 'category',
+                        'direction' => ($sortField === 'category' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        KATEGORI BARANG {!! $sortField === 'category' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th style="text-align: left;"><a class="sort-link" href="{{ route('stock.index', [
+                        'sort' => 'name',
+                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        NAMA BARANG {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th style="width: 180px; text-align: left;"><a class="sort-link" href="{{ route('stock.index', [
+                        'sort' => 'size',
+                        'direction' => ($sortField === 'size' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        UKURAN BARANG {!! $sortField === 'size' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th class="fs-6" style="width: 160px;"><a class="sort-link" href="{{ route('stock.index', [
+                        'sort' => 'stock',
+                        'direction' => ($sortField === 'stock' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        STOCK TERSEDIA SAAT INI {!! $sortField === 'stock' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
                         <th style="width: 120px;">TAMBAH STOCK</th>
                     </tr>
                 </thead>

@@ -23,8 +23,16 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Ukuran</th>
-                        <th>Jumlah Produk</th>
+                        <th><a class="sort-link" href="{{ route('masterdata.ukuran.index', [
+                        'sort' => 'name',
+                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc',
+                        'page' => $sizes->currentPage()]) }}">
+                        Nama Ukuran {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a></th>
+                        <th><a href="{{ route('masterdata.ukuran.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc', 'page' => $sizes->currentPage()]) }}">
+                        Jumlah Produk
+                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                        </a> </th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

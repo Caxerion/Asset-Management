@@ -7,7 +7,28 @@
     <table class="table">
         <thead>
             <tr>
-                <th>SKU</th><th>Nama</th><th>Kategori</th><th>Ukuran</th><th>Stok</th><th>Aksi</th>
+                <th>SKU</th>
+                <th><a class="sort-link" href="{{ route('products.index', [
+                        'sort' => 'requested_by',
+                        'direction' => ($sortField === 'requested_by' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        NAMA {!! $sortField === 'requested_by' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                </a></th>
+                <th><a class="sort-link" href="{{ route('products.index', [
+                        'sort' => 'category_id',
+                        'direction' => ($sortField === 'category_id' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        KATEGORI {!! $sortField === 'category_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                    </a></th>
+                <th><a class="sort-link" href="{{ route('products.index', [
+                        'sort' => 'size_id',
+                        'direction' => ($sortField === 'size_id' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        UKURAN {!! $sortField === 'size_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                    </a></th>
+                <th><a class="sort-link" href="{{ route('products.index', [
+                        'sort' => 'stock',
+                        'direction' => ($sortField === 'stock' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        STOK {!! $sortField === 'stock' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                    </a></th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>

@@ -6,13 +6,24 @@ use App\Models\Product;
 use App\Models\StockBalance;
 use App\Models\Floor;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class StockController extends Controller
 {
     // Menampilkan daftar stok barang
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'stockBalance']);
+
+        // Get sorting parameters from query string, with defaults
+        $sortField = $request->get('sort', 'name'); // default column
+        $sortDirection = $request->get('direction', 'asc'); // default direction
+
+        // Validate sort direction
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'asc';
+        }
+
+        $query = Product::with(['category', 'size', 'stockBalances']);
 
         if ($request->q) {
             $q = $request->q;
@@ -33,7 +44,7 @@ class StockController extends Controller
         
         $floors = Floor::all();
 
-        return view('stock.index', compact('products', 'floors'));
+        return view('stock.index', compact('products', 'floors', 'sortField', 'sortDirection'));
     }
 
     // Form tambah stok barang - redirect to stock index (view not implemented)
