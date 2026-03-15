@@ -408,10 +408,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
                     <option value="created_at_desc" {{ $sortField === 'created_at' && $sortDirection === 'desc' ? 'selected' : '' }}>Tanggal (Terbaru)</option>
                     <option value="created_at_asc" {{ $sortField === 'created_at' && $sortDirection === 'asc' ? 'selected' : '' }}>Tanggal (Terlama)</option>
-                    <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>ID (Terbaru)</option>
-                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>ID (Terlama)</option>
-                    {{ $sortField === 'requested_by' && $sortDirection === 'asc' ? 'selected' : '' }}>Nama Pengambil (A-Z)</option>
-                    <option value="requested_by_desc" {{ $sortField === 'requested_by' && $sortDirection === 'desc' ? 'selected' : '' }}>Nama Pengambil (Z-A)</option> <option value="requested_by_asc"
                     <option value="items_count_desc" {{ $sortField === 'items_count' && $sortDirection === 'desc' ? 'selected' : '' }}>Jumlah Pickup (Banyak)</option>
                     <option value="items_count_asc" {{ $sortField === 'items_count' && $sortDirection === 'asc' ? 'selected' : '' }}>Jumlah Pickup (Sedikit)</option>
                 </select>

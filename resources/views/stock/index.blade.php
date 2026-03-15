@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
                     <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>Default (1-10)</option>
-                    <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>Terakhir Ditambahkan</option>
                     <option value="stock_desc" {{ $sortField === 'stock' && $sortDirection === 'desc' ? 'selected' : '' }}>Stock Terbanyak</option>
                     <option value="stock_asc" {{ $sortField === 'stock' && $sortDirection === 'asc' ? 'selected' : '' }}>Stock Tersedikit</option>
                 </select>
