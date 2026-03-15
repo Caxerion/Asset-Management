@@ -17,9 +17,13 @@ class PersediaanController extends Controller
     // Menampilkan histori pengambilan barang dan stock barang (same page)
     public function index(Request $request)
     {   
-        // Get sorting parameters
-        $sortField = $request->get('sort', 'id');
-        $sortDirection = $request->get('direction', 'desc');
+        // Get sorting parameters from combined field (e.g., id_desc, created_at_asc)
+        $sortOption = $request->get('sort', 'id_desc');
+        $sortParts = explode('_', $sortOption);
+        
+        // Last part is the direction, everything else is the field
+        $sortDirection = array_pop($sortParts);
+        $sortField = implode('_', $sortParts);
         
         if (!in_array($sortDirection, ['asc', 'desc'])) {
             $sortDirection = 'desc';
@@ -66,18 +70,6 @@ class PersediaanController extends Controller
         } else {
             $pickups = $pickupQuery->orderBy($sortField, $sortDirection)->paginate(10);
         }
-        
-        // Search filter for histori pengambilan
-        if ($request->q) {
-            $q = $request->q;
-            $pickupQuery->where(function($builder) use ($q) {
-                $builder->whereHas('user', fn($u) => $u->where('name', 'like', "%$q%"))
-                        ->orWhereHas('floor', fn($f) => $f->where('name', 'like', "%$q%"))
-                        ->orWhereHas('items.product', fn($p) => $p->where('name', 'like', "%$q%"));
-            });
-        }
-        
-        $pickups = $pickupQuery->latest()->paginate(10);
 
         // Products query
         $productQuery = Product::with(['category', 'stockBalance']);

@@ -1,6 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sortSelect');
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        // Sorting dropdown - automatic navigation on change
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('sort', sortValue);
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        // Search input - automatic filtering on type (debounced)
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchValue = this.value.toLowerCase();
+                
+                searchTimeout = setTimeout(function() {
+                    const rows = document.querySelectorAll('.histori-table tbody tr');
+                    rows.forEach(function(row) {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchValue) ? '' : 'none';
+                    });
+                }, 300);
+            });
+        }
+    });
+</script>
 <style>
     .table thead th {
         position: relative;
@@ -369,14 +402,20 @@ document.addEventListener('DOMContentLoaded', function() {
     {{-- Card with table --}}
     <div class="card">
         <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
-            <form method="GET" action="{{ route('persediaan.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari Histori Pengambilan Barang..." 
-                       class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;" value="{{ request('q') }}">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-                @if(request('q'))
-                    <a href="{{ route('persediaan.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                @endif
-            </form>
+            <div class="d-flex gap-2 align-items-center">
+                <input type="text" id="searchInput" placeholder="🔍 Cari Histori Pengambilan..." 
+                       class="form-control form-control-sm" style="width: 300px; border-radius: 10px;">
+                <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
+                    <option value="created_at_desc" {{ $sortField === 'created_at' && $sortDirection === 'desc' ? 'selected' : '' }}>Tanggal (Terbaru)</option>
+                    <option value="created_at_asc" {{ $sortField === 'created_at' && $sortDirection === 'asc' ? 'selected' : '' }}>Tanggal (Terlama)</option>
+                    <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>ID (Terbaru)</option>
+                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>ID (Terlama)</option>
+                    {{ $sortField === 'requested_by' && $sortDirection === 'asc' ? 'selected' : '' }}>Nama Pengambil (A-Z)</option>
+                    <option value="requested_by_desc" {{ $sortField === 'requested_by' && $sortDirection === 'desc' ? 'selected' : '' }}>Nama Pengambil (Z-A)</option> <option value="requested_by_asc"
+                    <option value="items_count_desc" {{ $sortField === 'items_count' && $sortDirection === 'desc' ? 'selected' : '' }}>Jumlah Pickup (Banyak)</option>
+                    <option value="items_count_asc" {{ $sortField === 'items_count' && $sortDirection === 'asc' ? 'selected' : '' }}>Jumlah Pickup (Sedikit)</option>
+                </select>
+            </div>
             <div class="d-flex gap-2 align-items-center">
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#catatPengambilanModal" style="border-radius: 6px; padding-bottom:10px; padding-top:10px;">
                     <i class="fa fa-plus"></i> Catat Pengambilan
@@ -393,26 +432,17 @@ document.addEventListener('DOMContentLoaded', function() {
             <table class="table table-bordered table-striped mb-0 histori-table" style="padding-top: 20px;">
                 <thead>
                     <tr class="no-border">
-                        <th style="min-width: 80px; width: 80px; vertical-align: middle;  text-align: center; border-right: 1px solid #dee2e6 !important;"><a href="{{ route('persediaan.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
+                        <th style="min-width: 80px; width: 80px; vertical-align: middle;  text-align: center; border-right: 1px solid #dee2e6 !important;">
                         #
-                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a> </th>
-                        <th style="width: 230px; vertical-align: middle; padding-left: 15px;"><a class="sort-link" href="{{ route('persediaan.index', [
-                        'sort' => 'requested_by',
-                        'direction' => ($sortField === 'requested_by' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        NAMA PENGAMBIL {!! $sortField === 'requested_by' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th style="vertical-align: middle; padding-left: 15px;"><a href="{{ route('persediaan.index', [
-                        'sort' => 'items_count', 'direction' => ($sortField === 'items_count' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        LIST BARANG {!! $sortField === 'items_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th style="width: 185px; vertical-align: middle; padding-left: 15px;"><a href="{{ route('persediaan.index', [
-                        'sort' => 'created_at', 'direction' => ($sortField === 'created_at' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        TANGGAL PENGAMBILAN {!! $sortField === 'created_at' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th style="width: 155px; text-align: center; vertical-align: middle;"><a href="{{ route('persediaan.index', ['sort' => 'floor_id', 'direction' => ($sortField === 'floor_id' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        UNTUK LANTAI? {!! $sortField === 'floor_id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
+                        </th>
+                        <th style="width: 230px; vertical-align: middle; padding-left: 15px;">
+                        NAMA PENGAMBIL</th>
+                        <th style="vertical-align: middle; padding-left: 15px;">
+                        LIST BARANG</th>
+                        <th style="width: 185px; vertical-align: middle; padding-left: 15px;">
+                        TANGGAL PENGAMBILAN</th>
+                        <th style="width: 155px; text-align: center; vertical-align: middle;">
+                        UNTUK LANTAI?</th>
                         <th style="width: 110px; text-align: left; vertical-align: middle; padding-left: 15px;">LIHAT DETAIL</th>
                     </tr>
                 </thead>

@@ -1,6 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sortSelect');
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        // Sorting dropdown - automatic navigation on change
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('sort', sortValue);
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        // Search input - automatic filtering on type (debounced)
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchValue = this.value.toLowerCase();
+                
+                searchTimeout = setTimeout(function() {
+                    const rows = document.querySelectorAll('.stock-table tbody tr');
+                    rows.forEach(function(row) {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchValue) ? '' : 'none';
+                    });
+                }, 300);
+            });
+        }
+    });
+</script>
 <style>
     .table thead th {
         position: relative;
@@ -74,14 +107,19 @@ document.addEventListener('DOMContentLoaded', function() {
     {{-- Card with table --}}
     <div class="card">
         <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
-            <form method="GET" action="{{ route('stock.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari Stock Barang" 
-                       class="form-control form-control-sm" style="width: 350px; border-radius: 10px; padding-bottom: 10px; padding-top: 10px;"value="{{ request('q') }}">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-                @if(request('q'))
-                    <a href="{{ route('stock.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                @endif
-            </form>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="input-group" style="width: 300px;">
+                    <span class="input-group-text bg-white border-end-0" style="border-radius: 10px 0 0 10px;"><i class="fa fa-search"></i></span>
+                    <input type="text" id="searchInput" placeholder="Cari Stock Barang..." 
+                           class="form-control form-control-sm border-start-0" style="border-radius: 0 10px 10px 0;">
+                </div>
+                <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
+                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>Default (1-10)</option>
+                    <option value="id_desc" {{ $sortField === 'id' && $sortDirection === 'desc' ? 'selected' : '' }}>Terakhir Ditambahkan</option>
+                    <option value="stock_desc" {{ $sortField === 'stock' && $sortDirection === 'desc' ? 'selected' : '' }}>Stock Terbanyak</option>
+                    <option value="stock_asc" {{ $sortField === 'stock' && $sortDirection === 'asc' ? 'selected' : '' }}>Stock Tersedikit</option>
+                </select>
+            </div>
             <div class="d-flex gap-2 align-items-center">
                 <!-- <h6 class="mb-0">Data Stock Barang</h6> -->
                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetStockModal" style="border-radius: 6px; padding-bottom:10px; padding-top:10px;">
@@ -90,33 +128,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-bordered table-striped mb-0">
+            <table class="table table-bordered table-striped mb-0 stock-table">
                 <thead>
                     <tr>
-<th style="width: 50px;"><a href="{{ route('stock.index', ['sort' => 'id', 'direction' => ($sortField === 'id' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        #
-                        {!! $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a> </th>
-                        <th class="fs-6" style="width: 195px; text-align: left;"><a class="sort-link" href="{{ route('stock.index', [
-                        'sort' => 'category',
-                        'direction' => ($sortField === 'category' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        KATEGORI BARANG {!! $sortField === 'category' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th style="text-align: left;"><a class="sort-link" href="{{ route('stock.index', [
-                        'sort' => 'name',
-                        'direction' => ($sortField === 'name' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        NAMA BARANG {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th style="width: 180px; text-align: left;"><a class="sort-link" href="{{ route('stock.index', [
-                        'sort' => 'size',
-                        'direction' => ($sortField === 'size' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        UKURAN BARANG {!! $sortField === 'size' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
-                        <th class="fs-6" style="width: 160px;"><a class="sort-link" href="{{ route('stock.index', [
-                        'sort' => 'stock',
-                        'direction' => ($sortField === 'stock' && $sortDirection === 'asc') ? 'desc' : 'asc']) }}">
-                        STOCK TERSEDIA SAAT INI {!! $sortField === 'stock' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                        </a></th>
+                        <th style="width: 50px;">#</th>
+                        <th class="fs-6" style="width: 195px; text-align: left;">KATEGORI BARANG</th>
+                        <th style="text-align: left;">NAMA BARANG</th>
+                        <th style="width: 180px; text-align: left;">UKURAN BARANG</th>
+                        <th class="fs-6" style="width: 160px;">STOCK TERSEDIA SAAT INI</th>
                         <th style="width: 120px;">TAMBAH STOCK</th>
                     </tr>
                 </thead>

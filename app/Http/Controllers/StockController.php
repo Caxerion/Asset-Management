@@ -13,34 +13,34 @@ class StockController extends Controller
     // Menampilkan daftar stok barang
     public function index(Request $request)
     {
-
-        // Get sorting parameters from query string, with defaults
-        $sortField = $request->get('sort', 'name'); // default column
-        $sortDirection = $request->get('direction', 'asc'); // default direction
-
-        // Validate sort direction
+        // Get sorting parameters from combined field (e.g., id_asc, stock_desc)
+        $sortOption = $request->get('sort', 'id_asc');
+        $sortParts = explode('_', $sortOption);
+        
+        // Last part is the direction, everything else is the field
+        $sortDirection = array_pop($sortParts);
+        $sortField = implode('_', $sortParts);
+        
         if (!in_array($sortDirection, ['asc', 'desc'])) {
             $sortDirection = 'asc';
         }
 
         $query = Product::with(['category', 'size', 'stockBalances']);
 
-        if ($request->q) {
-            $q = $request->q;
-            $query->where(function($query) use ($q) {
-                $query->where('name','like',"%$q%")
-                      ->orWhereHas('category', fn($c) => $c->where('name','like',"%$q%"))
-                      ->orWhereHas('size', fn($s) => $s->where('name','like',"%$q%"));
-            });
+        // Apply sorting
+        if ($sortField === 'stock') {
+            // Sort by total stock (sum of qty_on_hand from stock_balances)
+            $query->select('products.*')
+                  ->leftJoin('stock_balances', 'products.id', '=', 'stock_balances.product_id')
+                  ->groupBy('products.id')
+                  ->orderByRaw('COALESCE(SUM(stock_balances.qty_on_hand), 0) ' . $sortDirection);
+        } else {
+            // Default sort by ID
+            $query->orderBy('id', $sortDirection);
         }
-
-        // Get page from session or URL, default to 1
-        $page = $request->page ?? session('stock_page', 1);
         
-        $products = $query->paginate(6, ['*'], 'page', $page);
-        
-        // Store current page in session
-        session(['stock_page' => $products->currentPage()]);
+        // Get products with pagination (6 per page)
+        $products = $query->paginate(6);
         
         $floors = Floor::all();
 
