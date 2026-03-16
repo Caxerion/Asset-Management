@@ -7,7 +7,7 @@
         const searchInput = document.getElementById('searchInput');
         let searchTimeout;
 
-        // Sorting dropdown - automatic navigation on change
+        // Sorting dropdown - automatic navigation on change 1
         if (sortSelect) {
             sortSelect.addEventListener('change', function() {
                 const sortValue = this.value;

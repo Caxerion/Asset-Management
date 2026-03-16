@@ -17,7 +17,7 @@
             });
         }
 
-        // Search input - automatic filtering on type (debounced)
+        // Search input - automatic filtering on type (debounced) 1
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
