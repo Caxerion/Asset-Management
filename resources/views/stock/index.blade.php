@@ -46,7 +46,20 @@
         top: 35%;
         height: 30%;
         width: 1px;
-        background-color: #dee2e6;
+        background-color: #b8b8b8;
+    }
+    /* Remove vertical lines from tbody and make horizontal lines vibrant white */
+    .table tbody td {
+        border-left: none !important;
+        border-right: none !important;
+        border-top: 1px solid #ffffff !important;
+        border-bottom: 1px solid #ffffff !important;
+    }
+    .table thead th {
+        border-bottom: 2px solid #cac8c8 !important;
+    }
+    .table tbody tr:not(:last-child) td {
+        border-bottom: 1px solid #cac8c8  !important;
     }
 </style>
 <!-- SweetAlert2 -->
@@ -91,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
         <span class="text-muted fs-5"><i class="fa fa-clipboard-list" style="margin-right: 2px;"></i>Persediaan/</span>
-        <span class="d-inline fs-5"><i class="fa fa-list" style="margin-right: 4px;"></i>Stock Barang</span>
+        <span class="text-muted d-inline fs-5"><i class="fa fa-list" style="margin-right: 4px;"></i>Stock Barang</span>
     </div>
 
     {{-- Tab menu --}}
@@ -109,12 +122,11 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
             <div class="d-flex gap-2 align-items-center">
                 <div class="input-group" style="width: 300px;">
-                    <span class="input-group-text bg-white border-end-0" style="border-radius: 10px 0 0 10px;"><i class="fa fa-search"></i></span>
-                    <input type="text" id="searchInput" placeholder="Cari Stock Barang..." 
-                           class="form-control form-control-sm border-start-0" style="border-radius: 0 10px 10px 0;">
+                    <input type="text" id="searchInput" placeholder="🔍 Cari Stock Barang..." 
+                    class="form-control form-control-sm border-start-0" style="border-radius: 0 10px 10px 0;">
                 </div>
                 <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
-                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>Default (1-10)</option>
+                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>Default</option>
                     <option value="stock_desc" {{ $sortField === 'stock' && $sortDirection === 'desc' ? 'selected' : '' }}>Stock Terbanyak</option>
                     <option value="stock_asc" {{ $sortField === 'stock' && $sortDirection === 'asc' ? 'selected' : '' }}>Stock Tersedikit</option>
                 </select>
@@ -127,29 +139,29 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-bordered table-striped mb-0 stock-table">
+            <table class="table table-bordered mb-0 stock-table">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">#</th>
-                        <th class="fs-6" style="width: 195px; text-align: left;">KATEGORI BARANG</th>
-                        <th style="text-align: left;">NAMA BARANG</th>
-                        <th style="width: 180px; text-align: left;">UKURAN BARANG</th>
-                        <th class="fs-6" style="width: 160px;">STOCK TERSEDIA SAAT INI</th>
-                        <th style="width: 120px;">TAMBAH STOCK</th>
+                        <th style="width: 50px; color: #313131;">#</th>
+                        <th class="fs-6" style="width: 195px; text-align: left;" style= "color: #313131;">KATEGORI BARANG</th>
+                        <th style="text-align: left; color: #313131;">NAMA BARANG</th>
+                        <th style="width: 180px; text-align: left; color: #313131; padding-left: 15px;">UKURAN BARANG</th>
+                        <th class="fs-6" style="width: 160px; color: #313131;">STOCK TERSEDIA SAAT INI</th>
+                        <th style="width: 120px; color: #313131;">TAMBAH STOCK</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($products as $product)
                         <tr>
-                            <td>#{{ $product->id }}</td>
+                            <td style="color: #0a5879;">#{{ $product->id }}</td>
                             <td>
-                                <span class="badge bg-primary">{{ $product->category->name ?? '-' }}</span>
+                                <span style= "color: #373737;">{{ $product->category->name ?? '-' }}</span>
                             </td>
-                            <td>{{ $product->name }}</td>
-                            <td>{{ $product->size->name ?? '-' }}</td>
+                            <td style= "color: #373737;">{{ $product->name }}</td>
+                            <td style= "color: #373737; padding-left: 15px;">{{ $product->size->name ?? '-' }}</td>
                             <td>
                                 @if($product->stock_balance > 10)
-                                    <span class="badge bg-success">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-primary">{{ $product->stock_balance }} {{ $product->unit }}</span>
                                 @elseif($product->stock_balance > 0)
                                     <span class="badge bg-warning text-dark">{{ $product->stock_balance }} {{ $product->unit }}</span>
                                 @else
@@ -157,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 @endif
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-success" 
+                                <button type="button" class="btn btn-sm btn-primary" 
                                         data-bs-toggle="modal" data-bs-target="#tambahStockModal{{ $product->id }}">
                                     + Tambah
                                 </button>

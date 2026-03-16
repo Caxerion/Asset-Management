@@ -187,7 +187,7 @@
                 <span class="text-black me-3">👤 {{ auth()->user()->name ?? 'Guest' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-dark">Logout</button>
+                    <button type="submit" class="btn btn-sm btn-outline-dark mt-1">Logout</button>
                 </form>
             </div>
         </div>

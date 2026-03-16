@@ -46,7 +46,21 @@
         top: 35%;
         height: 30%;
         width: 1px;
-        background-color: #dee2e6;
+        background-color: #b8b8b8;
+    }
+    
+    /* Remove vertical lines from tbody and make horizontal lines vibrant white */
+    .table tbody td {
+        border-left: none !important;
+        border-right: none !important;
+        border-top: 1px solid #b8b8b8 !important;
+        border-bottom: 1px solid #b8b8b8 !important;
+    }
+    .table thead th {
+        border-bottom: 2px solid #b8b8b8 !important;
+    }
+    .table tbody tr:not(:last-child) td {
+        border-bottom: 1px solid #b8b8b8 !important;
     }
     
     /* Make histori table wider */
@@ -386,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
         <span class="text-muted fs-5"><i class="fa fa-clipboard-list" style="margin-right: 2px;"></i>Persediaan /</span>
-        <span class="d-inline fs-5"><i class="fa fa-link" style="margin-right: 2px;"></i>Histori Pengambilan</span>
+        <span class="text-muted d-inline fs-5"><i class="fa fa-link" style="margin-right: 2px;"></i>Histori Pengambilan</span>
     </div>
 
     {{-- Tab menu --}}
@@ -425,29 +439,29 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-            <table class="table table-bordered table-striped mb-0 histori-table" style="padding-top: 20px;">
+            <table class="table table-bordered mb-0 histori-table" style="padding-top: 20px;">
                 <thead>
                     <tr class="no-border">
-                        <th style="min-width: 80px; width: 80px; vertical-align: middle;  text-align: center; border-right: 1px solid #dee2e6 !important;">
+                        <th style="color: #0a5879; min-width: 80px; width: 80px; vertical-align: middle;  text-align: center; border-right: 1px solid #dee2e6 !important;">
                         #
                         </th>
-                        <th style="width: 230px; vertical-align: middle; padding-left: 15px;">
+                        <th style="width: 230px; vertical-align: middle; padding-left: 15px; color: #373737;">
                         NAMA PENGAMBIL</th>
-                        <th style="vertical-align: middle; padding-left: 20px;">
+                        <th style="vertical-align: middle; padding-left: 20px; color: #373737;">
                         LIST BARANG</th>
-                        <th style="width: 185px; vertical-align: middle; padding-left: 15px;">
+                        <th style="width: 185px; vertical-align: middle; padding-left: 15px; color: #373737;">
                         TANGGAL PENGAMBILAN</th>
-                        <th style="width: 155px; text-align: center; vertical-align: middle;">
+                        <th style="width: 155px; text-align: center; vertical-align: middle; color: #373737;">
                         UNTUK LANTAI?</th>
-                        <th style="width: 110px; text-align: left; vertical-align: middle; padding-left: 15px;">LIHAT DETAIL</th>
+                        <th style="width: 110px; text-align: left; vertical-align: middle; padding-left: 15px; color: #373737;">LIHAT DETAIL</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($pickups as $pickup)
                         <tr>
-                            <td style="border-right: 0;">{{ $pickup->id }}</td>
-                            <td style="border-left: 0; border-right: 0;">{{ $pickup->user->name ?? 'N/A' }}</td>
-                            <td style="border-left: 0; border-right: 0;">
+                            <td style="border-right: 0; color: #0a5879; text-align: center;">{{ $pickup->id }}</td>
+                            <td style="border-left: 0; border-right: 0; ">{{ $pickup->user->name ?? 'N/A' }}</td>
+                            <td style="border-left: 0; border-right: 0; padding-left: 15px;">
                                 @php
                                     // Map specific products to specific colors based on category
                                     $productColors = [
