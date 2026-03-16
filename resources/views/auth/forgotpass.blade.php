@@ -18,7 +18,7 @@
             <div class="card login-box">
 
                 <div class="center">
-                    <img src="{{ asset('public/assets/img/RE.png') }}" height="50">
+                    <img src="{{ asset('assets/img/logo-RE.png') }}" height="50">
 
                     <h5 class="login-title">Kanal Lupa Password</h5>
                     <p class="login-subtitle">Masukkan email Anda untuk reset password</p>
@@ -60,7 +60,7 @@
 
                 <div class="center" style="margin-top: 20px;">
                     <a href="{{ route('login') }}" class="grey-text text-darken-1">
-                        <i class="material-icons">arrow_back</i> Kembali ke Login
+                     Kembali ke Login
                     </a>
                 </div>
 
@@ -70,5 +70,43 @@
 </div>
 
 <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Success message - Link reset password
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Link Reset Dibuat!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    // Show reset link in alert
+    @if(session('reset_link'))
+        Swal.fire({
+            icon: 'info',
+            title: 'Password Reset Link',
+            html: '<a href="{{ session('reset_link') }}" target="_blank" style="word-break: break-all;">{{ session('reset_link') }}</a>',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Buka Link'
+        });
+    @endif
+
+    // Error message
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '{{ $errors->first() }}',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+});
+</script>
 </body>
 </html>

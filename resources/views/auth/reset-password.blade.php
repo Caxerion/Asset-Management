@@ -18,7 +18,7 @@
             <div class="card login-box">
 
                 <div class="center">
-                    <img src="{{ asset('public/assets/img/RE.png') }}" height="50">
+                    <img src="{{ asset('assets/img/logo-RE.png') }}" height="50">
 
                     <h5 class="login-title">Reset Password 🔐</h5>
                     <p class="login-subtitle">Masukkan password baru Anda</p>
@@ -58,7 +58,7 @@
 
                 <div class="center" style="margin-top: 20px;">
                     <a href="{{ route('login') }}" class="grey-text text-darken-1">
-                        <i class="material-icons">arrow_back</i> Kembali ke Login
+                    Kembali ke Login
                     </a>
                 </div>
 
@@ -68,5 +68,21 @@
 </div>
 
 <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Error message
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '{{ $errors->first() }}',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+});
+</script>
 </body>
 </html>
