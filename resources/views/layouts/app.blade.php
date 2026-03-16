@@ -241,27 +241,6 @@
                 <h4>Stock Barang & Obat</h4>
                 <p>Sistem pengelolaan inventaris dan persediaan barang untuk kebutuhan operasional.</p>
             </div>
-            <div class="footer-links">
-                <h5>Navigasi</h5>
-                <ul>
-                    <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li><a href="{{ route('persediaan.index') }}">Histori Persediaan</a></li>
-                    <li><a href="{{ route('stock.index') }}">Stock Barang</a></li>
-                    <li><a href="{{ route('masterdata.produk.index') }}">Master Data</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h5>Kontak</h5>
-                <p><i class="fas fa-envelope"></i> support@company.com</p>
-                <p><i class="fas fa-phone"></i> +62 xxx xxxx</p>
-                <p><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</p>
-            </div>
-            <div class="footer-social">
-                <h5>Ikuti Kami</h5>
-                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-                <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-            </div>
         </div>
         <div class="footer-credit">
             <p>Copyright &copy; {{ date('Y') }} PTRE. All rights reserved.</p>

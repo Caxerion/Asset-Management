@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </th>
                         <th style="width: 230px; vertical-align: middle; padding-left: 15px;">
                         NAMA PENGAMBIL</th>
-                        <th style="vertical-align: middle; padding-left: 15px;">
+                        <th style="vertical-align: middle; padding-left: 20px;">
                         LIST BARANG</th>
                         <th style="width: 185px; vertical-align: middle; padding-left: 15px;">
                         TANGGAL PENGAMBILAN</th>
@@ -449,19 +449,112 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td style="border-left: 0; border-right: 0;">{{ $pickup->user->name ?? 'N/A' }}</td>
                             <td style="border-left: 0; border-right: 0;">
                                 @php
-                                    $colors = ['primary','success','warning','danger','info'];
+                                    // Map specific products to specific colors based on category
+                                    $productColors = [
+                                        // Produk Pembersih
+                                        'Handsoap' => '#0035b0',
+                                        'Floor Cleaner' => '#50ad8b',
+                                        'Glass Cleaner' => '#63b9db',
+                                        'Bowl Cleaner' => '#4e71db',
+                                        'Carpet Shampoo' => '#F4A460',
+                                        'Karbol' => '#228B22',
+                                        'Furniture Polish' => '#8B4513',
+                                        'Detergent' => '#b06767',
+                                        'Sunlight' => '#c1d76b',
+                                        'Bubuk Pembersih PIM B29' => '#59e892',
+                                        
+                                        // Pengharum & Pewangi
+                                        'Pengharum Ruangan (Stella/Glade)' => '#9090da',
+                                        'Bay Fresh' => '#FFDAB9',
+                                        'Stella Gantung' => '#DA70D6',
+                                        'Kamper Ball' => '#F5F5F5',
+                                        'Meta Chame' => '#BA55D3',
+                                        'Lemon Pladge' => '#FFF700',
+                                        
+                                        // Alat Kebersihan
+                                        'Bottle Sprayer' => '#7FFFD4',
+                                        'Tapas Hijau' => '#008000',
+                                        'Dustpan Kaleng' => '#708090',
+                                        'Dustpan' => '#FF4500',
+                                        'Window Washer 35cm' => '#1E90FF',
+                                        'Refill Window Washer 35cm' => '#ADD8E6',
+                                        'Window Squeege 35cm' => '#36454F',
+                                        'Refill Squeege 35cm' => '#2F4F4F',
+                                        'Pad Holder' => '#000000',
+                                        'Ragball' => '#F0E68C',
+                                        'Refill Loby Duster' => '#000080',
+                                        'Kain Mop Putih' => '#707658',
+                                        'Kain Mop Biru' => '#0000FF',
+                                        'Sikat Tangkai' => '#A52A2A',
+                                        'Kanebo' => '#FFFFE0',
+                                        'Sapu Nilon' => '#800080',
+                                        'Pad Merah' => '#FF0000',
+                                        'Pad Putih' => '#8a8ade',
+                                        
+                                        // Kain & Lap
+                                        'Lap Handuk Biru' => '#4682B4',
+                                        'Lap Handuk Merah' => '#DC143C',
+                                        'Lap Majun' => '#696969',
+                                        'Tissu Roll' => '#FFFFFF',
+                                        'Tissu Towel' => '#F5F5DC',
+                                        
+                                        // Perlengkapan Proteksi
+                                        'Sarung Tangan Karet' => '#FFD700',
+                                        'Jas Hujan' => '#FFFF00',
+                                        
+                                        // Peralatan & Lain-lain
+                                        'Wet Floor Sign' => '#FFA500',
+                                        'Batrai A2 Alkalin / ABC' => '#B8860B',
+                                        'Batu Apung' => '#C0C0C0',
+                                        
+                                        // Plastik & Kemasan
+                                        'Plastik Polibek Hitam 60x100' => '#1A1A1A',
+                                        'Plastik Polibek Hitam 90x120' => '#000000',
+                                    ];
+                                    
                                     $items = collect($pickup->items ?? []);
-                                    $maxDisplay = 5;
+                                    
+                                    // Calculate total character length of all product names
+                                    $totalChars = $items->sum(function($item) {
+                                        $name = $item->product->name ?? 'Unknown';
+                                        return strlen($name) + strlen($item->qty) + 3; // +3 for " ()"
+                                    });
+                                    
+                                    // Show max 3 items, but show "view more" when:
+                                    // - Items count is 3-5 AND total character length > 80
+                                    $maxDisplay = 3;
                                     $displayItems = $items->take($maxDisplay);
                                     $remainingCount = $items->count() - $maxDisplay;
+                                    
+                                    // Show link if remaining items exist AND (3-5 items with long names OR more than 5 items)
+                                    $showViewMore = $remainingCount > 0 && ($items->count() >= 3 && $totalChars > 80 || $items->count() > 5);
                                 @endphp
-                                <div class="product-items-container">
+                                <div class="product-items-container" style="min-height: 60px; height: 60px; padding: 5px 0px; gap: 5px; display: flex; flex-wrap: wrap; align-items: flex-start;">
                                     @foreach($displayItems as $index => $item)
-                                        <span class="badge bg-{{ $colors[$index % count($colors)] }} product-item-badge">
-                                            {{ $item->product->name ?? 'N/A' }} ({{ $item->qty }})
+                                        @php
+                                            $productName = $item->product->name ?? 'Unknown';
+                                            $color = $productColors[$productName] ?? '#808080';
+                                            
+                                            // Convert hex to RGB
+                                            $hex = ltrim($color, '#');
+                                            $r = hexdec(substr($hex, 0, 2));
+                                            $g = hexdec(substr($hex, 2, 2));
+                                            $b = hexdec(substr($hex, 4, 2));
+                                            
+                                            // Vibrant transparent background (0.3 alpha for transparency)
+                                            $bgColor = "rgba({$r}, {$g}, {$b}, 0.35)";
+                                            
+                                            // Darker version for text (multiply RGB by 0.5 for darker shade
+                                            $darkR = max(0, intval($r * 0.5));
+                                            $darkG = max(0, intval($g * 0.5));
+                                            $darkB = max(0, intval($b * 0.5));
+                                            $textColor = "rgb({$darkR}, {$darkG}, {$darkB})";
+                                        @endphp
+                                        <span class="badge product-item-badge" style="background-color: {{ $bgColor }}; color: {{ $textColor }}; border: 1px solid {{ $textColor }};">
+                                            {{ $productName }} ({{ $item->qty }})
                                         </span>
                                     @endforeach
-                                    @if($remainingCount > 0)
+                                    @if($showViewMore)
                                       <a href="{{ route('persediaan.show', $pickup->id) }}" 
    class="product-more-indicator" 
    title="Lihat semua {{ $items->count() }} barang">

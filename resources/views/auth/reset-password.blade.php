@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Reset Password</title>
 
     <!-- Materialize -->
     <link rel="stylesheet" href="{{ asset('materialize/css/materialize.min.css') }}">
@@ -20,8 +20,8 @@
                 <div class="center">
                     <img src="{{ asset('public/assets/img/RE.png') }}" height="50">
 
-                    <h5 class="login-title">Welcome Back! 👋</h5>
-                    <p class="login-subtitle">Please sign-in to your account</p>
+                    <h5 class="login-title">Reset Password 🔐</h5>
+                    <p class="login-subtitle">Masukkan password baru Anda</p>
                 </div>
 
                 @if ($errors->any())
@@ -30,40 +30,38 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('login.process') }}">
+                <form method="POST" action="{{ route('password.update') }}">
                     @csrf
 
+                    <input type="hidden" name="token" value="{{ $token }}">
+                    <input type="hidden" name="email" value="{{ $email }}">
+
                     <div class="input-field">
-                        <input type="email" name="email" value="{{ old('email') }}" required>
+                        <input type="email" name="email" value="{{ $email }}" disabled>
                         <label>Email</label>
                     </div>
 
                     <div class="input-field">
                         <input type="password" name="password" required>
-                        <label>Password</label>
+                        <label>Password Baru</label>
                     </div>
 
-                    <p>
-                        <label>
-                            <input type="checkbox" name="remember" />
-                            <span>Remember Me</span>
-                        </label>
-
-                        <a href="{{ route('password.request') }}" class="right">Forgot Password?</a>
-                    </p>
+                    <div class="input-field">
+                        <input type="password" name="password_confirmation" required>
+                        <label>Konfirmasi Password</label>
+                    </div>
 
                     <button class="btn waves-effect waves-light btn-login">
-                        Login
+                        Reset Password
                     </button>
                 </form>
 
-            </div>
+                <div class="center" style="margin-top: 20px;">
+                    <a href="{{ route('login') }}" class="grey-text text-darken-1">
+                        <i class="material-icons">arrow_back</i> Kembali ke Login
+                    </a>
+                </div>
 
-            <div class="center grey-text text-darken-1" style="margin-top: 20px;">
-                <p>Demo Credentials:</p>
-                <p><strong>Admin:</strong> admin@gudang.test / adminBARANG!</p>
-                <p><strong>Peminjam:</strong> peminjam@gudang.test / PeminjamBARANG!</p>
-                <p><strong>Read Only:</strong> read@gudang.test / ReadBARANG!</p>
             </div>
         </div>
     </div>

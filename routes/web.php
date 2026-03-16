@@ -18,6 +18,7 @@ use App\Http\Controllers\PersonController;
 
 Route::get('/dashboard/pickups-by-category', [DashboardController::class, 'getPickupsByCategory']);
 Route::get('/dashboard/pickups-by-period', [DashboardController::class, 'getPickupsByPeriod']);
+Route::get('/dashboard/pickups-by-floor', [DashboardController::class, 'getPickupsByFloor']);
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,6 +30,14 @@ Route::post('/login', [UserController::class, 'login'])->name('login.process')->
 Route::get('/register', [UserController::class, 'registerForm'])->name('register')->middleware('guest');
 Route::post('/register', [UserController::class, 'register'])->name('register.process')->middleware('guest');
 Route::post('/logout', [UserController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Forgot Password routes
+Route::get('/forgot-password', [UserController::class, 'forgotPasswordForm'])->name('password.request')->middleware('guest');
+Route::post('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.sendResetLink')->middleware('guest');
+
+// Password Reset routes
+Route::get('/password-reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset')->middleware('guest');
+Route::post('/password-reset', [UserController::class, 'reset'])->name('password.update')->middleware('guest');
 
 // Protected routes - requires authentication
 Route::middleware('auth')->group(function () {

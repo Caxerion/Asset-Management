@@ -126,8 +126,8 @@
 <div class="hero home-section" id="homeSection">
     <div class="hero-content">
         <div class="hero-text">
-            <h1>Selamat Datang di Dashboard</h1>
-            <p class="second-text">Silakan pilih menu dari navigasi di atas.</p>
+            <h1>PTRE Stock Management</h1>
+            <p class="second-text">Aplikasi Manajemen stok dan pengambilan</p>
             
             <!-- Toggle Button -->
             <a href="{{ route('dashboard') }}?statistik" class="toggle-stats-btn">
@@ -154,6 +154,31 @@
                 </div>
             </div>
 
+            <!-- Date Filter Form -->
+            <form method="GET" action="{{ route('dashboard') }}" class="mb-4">
+                <input type="hidden" name="statistik" value="1">
+                <div class="row align-items-end">
+                    <div class="col-md-3">
+                        <label for="start_date" class="form-label">Tanggal Mulai</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date', now()->startOfMonth()->format('Y-m-d')) }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="end_date" class="form-label">Tanggal Akhir</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date', now()->format('Y-m-d')) }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ route('dashboard') }}?statistik" class="btn btn-secondary w-100">
+                            <i class="fas fa-reset"></i> Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+
             <!-- Summary Cards -->
             <div class="row mb-4">
                 <div class="col-md-6">
@@ -169,6 +194,14 @@
                         <div class="card-body">
                             <h5 class="card-title">Total Stok</h5>
                             <h2 class="mb-0">{{ $totalStok }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-danger text-white" style="margin-top: 20px;">
+                        <div class="card-body">
+                            <h5 class="card-title">Jumlah Customer Services</h5>
+                            <h2 class="mb-0">{{ $totalPerson }}</h2>
                         </div>
                     </div>
                 </div>
@@ -188,69 +221,14 @@
                     </div>
                 </div>
 
-                <!-- Bar Chart: Pickups by Period -->
+                <!-- Bar Chart: Pickups by Floor -->
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Pengambilan per Periode</h5>
-                            <select id="periodSelector" class="form-select form-select-sm" style="width: auto;" onchange="updateBarChart(this.value)">
-                                <option value="daily">Harian</option>
-                                <option value="weekly">Mingguan</option>
-                                <option value="monthly" selected>Bulanan</option>
-                            </select>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="periodBarChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Pickups -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Riwayat Pengambilan Terbaru</h5>
+                            <h5 class="mb-0">Pengambilan per Lantai</h5>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>No. Pengambilan</th>
-                                            <th>Tanggal</th>
-                                            <th>Peminta</th>
-                                            <th>Lantai</th>
-                                            <th>Produk</th>
-                                            <th>Jumlah</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse($recentPickups as $pickupLine)
-                                        <tr>
-                                            <td>{{ $pickupLine->pickup->pickup_no ?? '-' }}</td>
-                                            <td>{{ $pickupLine->pickup->pickup_date ?? '-' }}</td>
-                                            <td>{{ $pickupLine->pickup->user->name ?? '-' }}</td>
-                                            <td>{{ $pickupLine->pickup->floor->name ?? '-' }}</td>
-                                            <td>{{ $pickupLine->product->name ?? '-' }}</td>
-                                            <td>{{ $pickupLine->qty }}</td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center">Tidak ada data pengambilan</td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <!-- Pagination -->
-                            @if($recentPickups->hasPages())
-                            <div class="mt-3">
-                                {{ $recentPickups->links('components.custom-pagination') }}
-                            </div>
-                            @endif
+                        <div class="card-body" style="height: 300px;">
+                            <canvas id="floorBarChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -280,19 +258,29 @@
     });
     
     function loadCharts() {
+        // Get date values from the form
+        const startDate = document.getElementById('start_date')?.value || '';
+        const endDate = document.getElementById('end_date')?.value || '';
+        
+        // Only add date params if both dates are provided
+        let dateParams = '';
+        if (startDate && endDate) {
+            dateParams = `?start_date=${startDate}&end_date=${endDate}`;
+        }
+        
         // Pie Chart - Pickups by Category with custom colors
-        fetch('/dashboard/pickups-by-category')
+        fetch('/dashboard/pickups-by-category' + dateParams)
             .then(res => res.json())
             .then(data => {
                 // Map category names to specific colors
                 const colorMap = {
-                    'Produk Pembersih': '#FF0000',        // Red
-                    'Pengharum & Pewangi': '#28a745',    // Green
-                    'Alat Kebersihan': '#0d6efd',        // Blue
-                    'Kain & Lap': '#ffc107',             // Yellow
-                    'Perlengkapan Proteksi': '#6f42c1',   // Purple
-                    'Perlatan & Lain-lain': '#fd7e14',    // Orange
-                    'Plastik & Kemasan': '#6f42c1'       // Purple
+                    'Produk Pembersih': '#d32828',        // Red
+                    'Pengharum & Pewangi': '#2bc34e',    // Green
+                    'Alat Kebersihan': '#2b6dd0',        // Blue
+                    'Kain & Lap': '#cca739',             // Yellow
+                    'Perlengkapan Proteksi': '#6f40c5',   // Purple
+                    'Perlatan & Lain-lain': '#ce7731',    // Orange
+                    'Plastik & Kemasan': '#4e2896'       // Dark Purple
                 };
                 
                 const backgroundColor = data.labels.map(label => colorMap[label] || '#999999');
@@ -318,35 +306,39 @@
             })
             .catch(err => console.error('Error loading pie chart:', err));
 
-        // Initialize bar chart with default (monthly)
-        updateBarChart('monthly');
-    }
-
-    // Bar Chart - Pickups by Period
-    let barChart;
-
-    function updateBarChart(period) {
-        fetch(`/dashboard/pickups-by-period?period=${period}`)
-            .then(res => res.json())
+        // Initialize bar chart - Pickups by Floor
+        const floorUrl = '/dashboard/pickups-by-floor' + dateParams;
+        console.log('Floor chart URL:', floorUrl);
+        
+        fetch(floorUrl)
+            .then(res => {
+                console.log('Floor chart response:', res);
+                return res.json();
+            })
             .then(data => {
-                const ctx = document.getElementById('periodBarChart');
+                console.log('Floor chart data:', data);
                 
-                if (barChart) {
-                    barChart.destroy();
-                }
+                // If no data, show empty arrays
+                const labels = data.labels && data.labels.length > 0 ? data.labels : ['No Data'];
+                const values = data.values && data.values.length > 0 ? data.values : [0];
                 
-                barChart = new Chart(ctx, {
-                    type: 'line',
+                const ctx = document.getElementById('floorBarChart');
+                
+                // Define colors for each floor
+                const colors = [
+                    '#FF6384', '#00d945', '#FFCE56', '#439ed2', 
+                    '#9966FF', '#FF9F40', '#C9CBCF', '#4D5360'
+                ];
+                
+                new Chart(ctx, {
+                    type: 'bar',
                     data: {
-                        labels: data.labels,
+                        labels: labels,
                         datasets: [{
                             label: 'Jumlah Pengambilan',
-                            data: data.values,
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: '#36A2EB',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.3
+                            data: values,
+                            backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+                            borderWidth: 1
                         }]
                     },
                     options: {
@@ -358,11 +350,16 @@
                                     stepSize: 1
                                 }
                             }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         }
                     }
                 });
             })
-            .catch(err => console.error('Error loading bar chart:', err));
+            .catch(err => console.error('Error loading floor chart:', err));
     }
 </script>
 @endsection

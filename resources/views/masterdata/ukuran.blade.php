@@ -22,11 +22,11 @@
         <div class="input-group" style="max-width: 400px;">
             <input type="text" name="search" class="form-control" placeholder="Cari ukuran..." value="{{ request('search') }}">
             <button type="submit" class="btn btn-primary">
-                <i class="fa fa-search"></i>
+                Cari
             </button>
             @if(request('search'))
                 <a href="{{ route('masterdata.ukuran.index') }}" class="btn btn-secondary">
-                    <i class="fa fa-times"></i>
+                    Reset
                 </a>
             @endif
         </div>

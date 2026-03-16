@@ -23,15 +23,6 @@ class DashboardController extends Controller
         $totalUser = User::count();
         $totalPerson = Person::count(); // Assuming totalPerson is the same as totalUser
 
-        // Histori pengambilan terbaru (paginated - 10 per page)
-        $recentPickups = PickupLine::with([
-                'pickup.user',   // relasi ke user
-                'pickup.floor',  // relasi ke lantai
-                'product'        // relasi ke barang
-            ])
-            ->latest()
-            ->paginate(10);
-
         // Check if stats should be shown (for direct access via ?statistik)
         $showStats = $request->has('statistik');
 
@@ -43,7 +34,6 @@ class DashboardController extends Controller
             'totalUser',
             'totalPerson',
             'avgStok',
-            'recentPickups',
             'showStats'
         ));
     }
@@ -89,6 +79,58 @@ public function getPickupsByPeriod(Request $request)
     return response()->json([
         'labels' => $data->pluck('period'),
         'values' => $data->pluck('total')
+    ]);
+}
+
+// Get pickups by floor for bar chart
+public function getPickupsByFloor(Request $request)
+{
+    $startDate = $request->get('start_date');
+    $endDate = $request->get('end_date');
+    
+    $query = Pickup::query()->whereNotNull('floor_id');
+    
+    if ($startDate && $endDate) {
+        $query->whereBetween('pickup_date', [$startDate, $endDate]);
+    }
+    
+    $pickups = $query->with('floor')->get();
+    
+    // Define the floor order
+    $floorOrder = ['Mezanine', 'Lantai 1', 'Lantai 2', 'Lantai 3'];
+    
+    // Group by floor name manually to avoid null issues
+    $grouped = [];
+    foreach ($pickups as $pickup) {
+        if ($pickup->floor && $pickup->floor->name) {
+            $floorName = $pickup->floor->name;
+            if (!isset($grouped[$floorName])) {
+                $grouped[$floorName] = 0;
+            }
+            $grouped[$floorName]++;
+        }
+    }
+    
+    // Sort by floor order, then get labels and values
+    $sortedLabels = [];
+    $sortedValues = [];
+    
+    foreach ($floorOrder as $floor) {
+        $sortedLabels[] = $floor;
+        $sortedValues[] = $grouped[$floor] ?? 0;
+    }
+    
+    // Add any floors not in the predefined order
+    foreach ($grouped as $floor => $count) {
+        if (!in_array($floor, $floorOrder)) {
+            $sortedLabels[] = $floor;
+            $sortedValues[] = $count;
+        }
+    }
+    
+    return response()->json([
+        'labels' => $sortedLabels,
+        'values' => $sortedValues
     ]);
 }
 

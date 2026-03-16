@@ -14,7 +14,7 @@
     </div>
 
     <h3 class="mt-4">Daftar Barang</h3>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped mb-0 histori-table">
         <thead>
             <tr>
                 <th>#</th>

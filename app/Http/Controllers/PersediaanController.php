@@ -55,20 +55,20 @@ class PersediaanController extends Controller
             $pickups = $pickupQuery->select('pickups.*')
                 ->join('users', 'pickups.requested_by', '=', 'users.id')
                 ->orderBy('users.name', $sortDirection)
-                ->paginate(10);
+                ->paginate(7);
         } elseif ($sortField === 'floor_id') {
             $pickups = $pickupQuery->select('pickups.*')
                 ->join('floors', 'pickups.floor_id', '=', 'floors.id')
                 ->orderBy('floors.name', $sortDirection)
-                ->paginate(10);
+                ->paginate(7);
         } elseif ($sortField === 'items_count') {
             $pickups = $pickupQuery->select('pickups.*')
                 ->leftJoin('pickup_lines', 'pickups.id', '=', 'pickup_lines.pickup_id')
                 ->groupBy('pickups.id')
                 ->orderByRaw('COUNT(pickup_lines.id) ' . $sortDirection)
-                ->paginate(10);
+                ->paginate(7);
         } else {
-            $pickups = $pickupQuery->orderBy($sortField, $sortDirection)->paginate(10);
+            $pickups = $pickupQuery->orderBy($sortField, $sortDirection)->paginate(7);
         }
 
         // Products query
@@ -81,7 +81,7 @@ class PersediaanController extends Controller
                   ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%$q%"));
         }
         
-        $products = $productQuery->paginate(6);
+        $products = $productQuery->paginate(7);
 
         $users = Person::where('is_active', true)->get();
         $floors = Floor::all();
