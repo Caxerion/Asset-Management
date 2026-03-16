@@ -55,6 +55,7 @@ class Product extends Model
     public function getStockBalanceAttribute()
     {
         // Get the sum of all stock balances for this product across all floors
-        return $this->stockBalances()->sum('qty_on_hand');
+        return (int) $this->stockBalances()->sum('qty_on_hand');
+
     }
 }

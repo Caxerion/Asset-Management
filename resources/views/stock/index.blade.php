@@ -161,11 +161,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td style= "color: #373737; padding-left: 15px;">{{ $product->size->name ?? '-' }}</td>
                             <td>
                                 @if($product->stock_balance > 10)
-                                    <span class="badge bg-primary">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-primary">{{ (int) $product->stock_balance }} {{ $product->unit }}</span>
                                 @elseif($product->stock_balance > 0)
-                                    <span class="badge bg-warning text-dark">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-warning text-dark">{{ (int) $product->stock_balance }} {{ $product->unit }}</span>
                                 @else
-                                    <span class="badge bg-danger">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-danger">{{ (int) $product->stock_balance }} {{ $product->unit }}</span>
                                 @endif
                             </td>
                             <td>
