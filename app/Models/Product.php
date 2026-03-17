@@ -51,10 +51,11 @@ class Product extends Model
         return $this->hasMany(InventoryTransaction::class);
     }
 
-    // Accessor for stock_balance attribute used in views - shows total stock across all floors
+    // Accessor for stock_balance attribute used in views - shows total stock across all floors 1
     public function getStockBalanceAttribute()
     {
         // Get the sum of all stock balances for this product across all floors
-        return $this->stockBalances()->sum('qty_on_hand');
+        return (int) $this->stockBalances()->sum('qty_on_hand');
+
     }
 }

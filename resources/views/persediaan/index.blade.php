@@ -17,7 +17,7 @@
             });
         }
 
-        // Search input - automatic filtering on type (debounced)
+        // Search input - automatic filtering on type (debounced) 1
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             $textColor = "rgb({$darkR}, {$darkG}, {$darkB})";
                                         @endphp
                                         <span class="badge product-item-badge" style="background-color: {{ $bgColor }}; color: {{ $textColor }}; border: 1px solid {{ $textColor }};">
-                                            {{ $productName }} ({{ $item->qty }})
+                                           {{ $productName }} ({{ (int) $item->qty }})
                                         </span>
                                     @endforeach
                                     @if($showViewMore)
@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         @foreach($allProducts as $product)
                             <option value="{{ $product->id }}" 
                                     data-size="{{ $product->size ?? '-' }}" 
-                                    data-stock="{{ $product->stock_balance }}">
+                                    data-stock="{{ (int) $product->stock_balance }}">
                                 {{ $product->name }} ({{ $product->category->name ?? '-' }})
                             </option>
                         @endforeach

@@ -16,10 +16,10 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         // Ringkasan data
-        $totalProduk = Product::count();
-        $avgStok = StockBalance::avg('qty_on_hand');
-        $totalStok = StockBalance::sum('qty_on_hand');
-        $totalPickup = Pickup::count();
+        $totalProduk = (int) Product::count();
+        $avgStok = (int) StockBalance::avg('qty_on_hand');
+        $totalStok = (int) StockBalance::sum('qty_on_hand');
+        $totalPickup = (int) Pickup::count();
         $totalUser = User::count();
         $totalPerson = Person::count(); // Assuming totalPerson is the same as totalUser
 
