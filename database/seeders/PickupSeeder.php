@@ -7,41 +7,55 @@ use App\Models\PickupLine;
 use App\Models\Product;
 use App\Models\Floor;
 use App\Models\User;
+use App\Models\Person;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PickupSeeder extends Seeder
 {
     public function run()
     {
-        // Get existing users, floors, and products
+        // Clear existing pickups and pickup_lines to avoid duplicate errors
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        PickupLine::truncate();
+        Pickup::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Get existing users, floors, products, and people
         $users = User::all();
         $floors = Floor::all();
         $products = Product::all();
+        $people = Person::all();
 
-        if ($users->isEmpty() || $floors->isEmpty() || $products->isEmpty()) {
-            $this->command->info('Please run other seeders first (User, Floor, Product)');
+        if ($users->isEmpty() || $floors->isEmpty() || $products->isEmpty() || $people->isEmpty()) {
+            $this->command->info('Please run other seeders first (User, Floor, Product, Person)');
             return;
         }
 
         // Create multiple pickups with different floors
         for ($i = 1; $i <= 15; $i++) {
-            // Randomly select user and floor
+            // Randomly select user, floor, and person
             $user = $users->random();
             $floor = $floors->random();
+            $person = $people->random();
 
             // Create a Pickup
             $pickup = Pickup::create([
                 'pickup_no' => 'PU-2026-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'pickup_date' => now()->subDays(rand(0, 30)),
-                'requested_by' => $user->id,
+                'requested_by' => $person->id,
                 'floor_id' => $floor->id,
                 'notes' => 'Sample pickup ' . $i,
                 'created_by' => $user->id,
                 'updated_by' => $user->id,
             ]);
-
+            
             // Create 1-3 PickupLines (items)
-            $numItems = rand(1, min(3, $products->count()));
+            $productCount = $products->count();
+            if ($productCount === 0) {
+                continue;
+            }
+            $numItems = rand(1, min(3, $productCount));
             $randomProducts = $products->random($numItems);
 
             foreach ($randomProducts as $product) {

@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('pickup_no', 40)->unique();
             $table->dateTime('pickup_date');
 
-            $table->foreignId('requested_by')->constrained('users');
+            $table->foreignId('requested_by')->constrained('people');
             $table->foreignId('floor_id')->constrained();
 
             $table->text('notes')->nullable();

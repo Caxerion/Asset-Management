@@ -4,52 +4,225 @@
     <meta charset="UTF-8">
     <title>Stock Barang & Obat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="assets/fontsAwesome/css/all.min.css">
+    
+    <style>
+        .table {
+            border-radius: 25px;
+            overflow: hidden;
+        }
+        
+        /* Nav tabs hover and active states */
+        .nav-tabs {
+            border-bottom: none !important;
+        }
+        .nav-tabs .nav-link {
+            margin-inline: 5px;
+        }
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link.active {
+            background-color: #05445E !important;
+            color: white !important;
+            border-color: #05445E !important;
+            border-radius: 10px;
+        }
+        
+        /* Table header styling */
+        .card-header {
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+        }
+        
+        .pagination-wrapper {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .pagination-wrapper .page-link {
+            display: inline-block !important;
+            min-width: 36px;
+            height: 36px;
+            line-height: 34px;
+            padding: 0 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #fff;
+            color: #334155;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin: 0 2px;
+        }
+        
+        .pagination-wrapper .page-link:hover:not(.disabled):not(.active) {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+        
+        .pagination-wrapper .page-link.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+        }
+        
+        .pagination-wrapper .page-link.disabled {
+            color: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .pagination-info {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 10px;
+        }
+        
+        footer{
+            padding: 3rem 7% 1.5rem 7%;
+            background-color: #1e293b;
+            color: #e2e8f0;
+        }
+        footer .footer-inner{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .footer-brand, .footer-links, .footer-contact, .footer-social{
+            flex: 1;
+            min-width: 200px;
+        }
+        .footer-brand h4{
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .footer-brand p{
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+        .footer-links h5, .footer-contact h5, .footer-social h5{
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            border-bottom: 2px solid #3b82f6;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        .footer-links ul{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-links ul li{
+            margin-bottom: 0.5rem;
+        }
+        .footer-links a{
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .footer-links a:hover{
+            color: #3b82f6;
+        }
+        .footer-contact p{
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .footer-contact i{
+            color: #3b82f6;
+            margin-right: 0.5rem;
+        }
+        .footer-social a{
+            display: inline-flex;
+            direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #334155;
+            color: #e2e8f0;
+            text-decoration: none;
+            margin-right: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .footer-social a:hover{
+            background-color: #3b82f6;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .footer-credit{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #334155;
+        }
+        .footer-credit p{
+            font-size: 0.875rem;
+            color: #64748b;
+            margin: 0;
+        }
+    </style>
 </head>
-<body>
+<body style="background-color: #eae8f0;">
     {{-- Header atas --}}
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid d-flex justify-content-between">
+    <nav class="navbar navbar-expand-lg" style="background-color: #b4b3b6; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div class="container-fluid">
             <div class="d-flex align-items-center">
-                <span class="navbar-brand mb-0 h1">Stock Barang & Obat</span>
+                <img src="/assets/img/logo-RE.png" alt="logo" class="d-inline-block align-text-top ms-4" width="40" height="50">
+                <span class="navbar-brand mb-0 h1 ms-4">Stock Barang & Obat</span>
             </div>
             <div class="d-flex align-items-center">
-                <span class="text-white me-3">👤 {{ auth()->user()->name ?? 'Guest' }}</span>
+                <span class="text-black me-3">👤 {{ auth()->user()->name ?? 'Guest' }}</span>
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                    <button type="submit" class="btn btn-sm btn-outline-dark mt-1">Logout</button>
                 </form>
             </div>
         </div>
     </nav>
 
     {{-- Navbar bawah untuk menu utama --}}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white" style="box-shadow: 0 2px 10px rgba(0,0,0,0.25);">
+        <div class="container-fluid ms-4">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                        <a class="nav-link px-2 {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}" style="color:#05445E;"><i class="fa fa-home"></i>Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Persediaan
+                        <a class="nav-link dropdown-toggle" href="#" id="persediaanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #05445E;">
+                            <i class="fa fa-clipboard-list"></i>Persediaan
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="persediaanDropdown">
-                            <li><a class="dropdown-item" href="{{ route('persediaan.index') }}">Histori</a></li>
-                            <li><a class="dropdown-item" href="{{ route('stock.index') }}">Stock</a></li>
+                            <li><a class="dropdown-item" href="{{ route('persediaan.index') }}"><i class="fa fa-link" style="margin-right: 8px;"></i>Histori</a></li>
+                            <li><a class="dropdown-item" href="{{ route('stock.index') }}"><i class="fa-solid fa-list" style="margin-right:8px;"></i>Stock</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="masterdataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Master Data
+                        <a class="nav-link dropdown-toggle px-2" href="#" id="masterdataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #05445E;">
+                            <i class="fa fa-database"></i>Master Data
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="masterdataDropdown">
-                            <li><a class="dropdown-item" href="{{ route('masterdata.index') }}">Kategori/Lantai/Supplier</a></li>
+                            <li><a class="dropdown-item" href="{{ route('masterdata.kategori.index') }}"><i class="fa fa-tags" style="margin-right:8px;"></i>Kategori</a></li>
+                            <li><a class="dropdown-item" href="{{ route('masterdata.ukuran.index') }}"><i class="fa fa-tape" style="margin-right:8px;"></i>Ukuran</a></li>
+                            <li><a class="dropdown-item" href="{{ route('masterdata.lantai.index') }}"><i class="fa fa-layer-group" style="margin-right:8px;"></i>Lantai</a></li>
+                            <li><a class="dropdown-item" href="{{ route('masterdata.produk.index') }}"><i class="fa fa-box" style="margin-right:8px;"></i>Produk</a></li>
+                            <li><a class="dropdown-item" href="{{ route('person.index') }}"><i class="fa fa-user" style="margin-right:8px;"></i>Daftar CS</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -58,10 +231,23 @@
     </nav>
 
     {{-- Konten halaman --}}
-    <main class="py-4">
-        @yield('content')
-    </main>
-
+    @yield('content')
+    
+    {{-- Footer --}}
+    @if(Request::is('dashboard'))
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <h4>Stock Barang & Obat</h4>
+                <p>Sistem pengelolaan inventaris dan persediaan barang untuk kebutuhan operasional.</p>
+            </div>
+        </div>
+        <div class="footer-credit">
+            <p>Copyright &copy; {{ date('Y') }} PTRE. All rights reserved.</p>
+        </div>
+    </footer>
+    @endif
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

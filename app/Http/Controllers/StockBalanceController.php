@@ -47,6 +47,6 @@ class StockBalanceController extends Controller
     public function resetAll()
     {
         StockBalance::query()->update(['qty_on_hand' => 0]);
-        return response()->json(['message' => 'All stock has been reset to 0']);
+        return redirect()->route('stock.index')->with('success', 'Semua stock berhasil direset menjadi 0. Tapi kamu masih bisa isi lagi kok');
     }
 }

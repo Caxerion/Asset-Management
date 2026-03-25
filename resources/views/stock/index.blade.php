@@ -1,6 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sortSelect');
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        // Sorting dropdown - automatic navigation on change 1
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('sort', sortValue);
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        // Search input - automatic filtering on type (debounced)
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchValue = this.value.toLowerCase();
+                
+                searchTimeout = setTimeout(function() {
+                    const rows = document.querySelectorAll('.stock-table tbody tr');
+                    rows.forEach(function(row) {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchValue) ? '' : 'none';
+                    });
+                }, 300);
+            });
+        }
+    });
+</script>
 <style>
     .table thead th {
         position: relative;
@@ -13,82 +46,130 @@
         top: 35%;
         height: 30%;
         width: 1px;
-        background-color: #dee2e6;
+        background-color: #b8b8b8;
+    }
+    /* Remove vertical lines from tbody and make horizontal lines vibrant white */
+    .table tbody td {
+        border-left: none !important;
+        border-right: none !important;
+        border-top: 1px solid #ffffff !important;
+        border-bottom: 1px solid #ffffff !important;
+    }
+    .table thead th {
+        border-bottom: 2px solid #cac8c8 !important;
+    }
+    .table tbody tr:not(:last-child) td {
+        border-bottom: 1px solid #cac8c8  !important;
     }
 </style>
-<div class="container">
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for success message - Stock reset
+    @if(session('success') && str_contains(session('success'), 'direset'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Stock Di Reset',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for success message - Stock added
+    @if(session('success') && str_contains(session('success'), 'ditambahkan'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Stock Ditambah',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for error message
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+});
+</script>
+<div class="container pt-3">
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
-        <span class="text-muted fs-3">Persediaan /</span>
-        <h1 class="d-inline fs-3">Stock Barang</h1>
+        <span class="text-muted fs-5"><i class="fa fa-clipboard-list" style="margin-right: 2px;"></i>Persediaan/</span>
+        <span class="text-muted d-inline fs-5"><i class="fa fa-list" style="margin-right: 4px;"></i>Stock Barang</span>
     </div>
 
     {{-- Tab menu --}}
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('persediaan.index') }}">Histori Pengambilan</a>
+            <a class="nav-link" href="{{ route('persediaan.index') }}"><i class="fa fa-link" style="margin-right: 4px;"></i>Histori Pengambilan</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('stock.index') }}">Stock Barang</a>
+            <a class="nav-link active" href="{{ route('stock.index') }}"><i class="fa fa-list" style="margin-right: 4px;"></i>Stock Barang</a>
         </li>
     </ul>
 
-    {{-- Search --}}
-    <div class="d-flex justify-content-between mb-3">
-        <div class="col-md-4">
-            <form method="GET" action="{{ route('stock.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari..." 
-                       class="form-control form-control-sm" value="{{ request('q') }}">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-                @if(request('q'))
-                    <a href="{{ route('stock.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                @endif
-            </form>
-        </div>
-        <div>
-            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetStockModal">
-                <i class="fa fa-rotate-left"></i> Reset Semua Stock
-            </button>
-        </div>
-    </div>
-
     {{-- Card with table --}}
     <div class="card">
-        <div class="card-header bg-white py-2">
-            <h6 class="mb-0">Data Stock Barang</h6>
+        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-2 align-items-center">
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" id="searchInput" placeholder="🔍 Cari Stock Barang..." 
+                    class="form-control form-control-sm border-start-0" style="border-radius: 0 10px 10px 0;">
+                </div>
+                <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
+                    <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>Default</option>
+                    <option value="stock_desc" {{ $sortField === 'stock' && $sortDirection === 'desc' ? 'selected' : '' }}>Stock Terbanyak</option>
+                    <option value="stock_asc" {{ $sortField === 'stock' && $sortDirection === 'asc' ? 'selected' : '' }}>Stock Tersedikit</option>
+                </select>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <!-- <h6 class="mb-0">Data Stock Barang</h6> -->
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetStockModal" style="border-radius: 6px; padding-bottom:10px; padding-top:10px;">
+                    <i class="fa fa-rotate-left"></i> Reset Semua Stock
+                </button>
+            </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-bordered table-striped mb-0">
+            <table class="table table-bordered mb-0 stock-table">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">#</th>
-                        <th class="fs-6" style="width: 195px; text-align: left;">KATEGORI BARANG</th>
-                        <th style="text-align: left;">NAMA BARANG</th>
-                        <th style="width: 180px; text-align: left;">UKURAN BARANG</th>
-                        <th class="fs-6" style="width: 160px;">STOCK TERSEDIA SAAT INI</th>
-                        <th style="width: 120px;">TAMBAH STOCK</th>
+                        <th style="width: 50px; color: #313131;">#</th>
+                        <th class="fs-6" style="width: 195px; text-align: left;" style= "color: #313131;">KATEGORI BARANG</th>
+                        <th style="text-align: left; color: #313131;">NAMA BARANG</th>
+                        <th style="width: 180px; text-align: left; color: #313131; padding-left: 15px;">UKURAN BARANG</th>
+                        <th class="fs-6" style="width: 160px; color: #313131;">STOCK TERSEDIA SAAT INI</th>
+                        <th style="width: 120px; color: #313131;">TAMBAH STOCK</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($products as $product)
                         <tr>
-                            <td>#{{ $product->id }}</td>
+                            <td style="color: #0a5879;">#{{ $product->id }}</td>
                             <td>
-                                <span class="badge bg-primary">{{ $product->category->name ?? '-' }}</span>
+                                <span style= "color: #373737;">{{ $product->category->name ?? '-' }}</span>
                             </td>
-                            <td>{{ $product->name }}</td>
-                            <td>{{ $product->size->name ?? '-' }}</td>
+                            <td style= "color: #373737;">{{ $product->name }}</td>
+                            <td style= "color: #373737; padding-left: 15px;">{{ $product->size->name ?? '-' }}</td>
                             <td>
                                 @if($product->stock_balance > 10)
-                                    <span class="badge bg-success">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-primary">{{ (int) $product->stock_balance }} {{ $product->unit }}</span>
                                 @elseif($product->stock_balance > 0)
-                                    <span class="badge bg-warning text-dark">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-warning text-dark">{{ (int) $product->stock_balance }} {{ $product->unit }}</span>
                                 @else
-                                    <span class="badge bg-danger">{{ $product->stock_balance }} {{ $product->unit }}</span>
+                                    <span class="badge bg-danger">{{ (int) $product->stock_balance }} {{ $product->unit }}</span>
                                 @endif
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-success" 
+                                <button type="button" class="btn btn-sm btn-primary" 
                                         data-bs-toggle="modal" data-bs-target="#tambahStockModal{{ $product->id }}">
                                     + Tambah
                                 </button>
@@ -126,12 +207,14 @@
                     @endforelse
                 </tbody>
             </table>
+            {{-- Pagination inside table --}}
+            @if($products->hasPages())
+            <div class="pagination-wrapper mt-3">
+                {{ $products->links('components.custom-pagination') }}
+            </div>
+            <div class="pagination-info">Menampilkan {{ $products->firstItem() }} sampai {{ $products->lastItem() }} dari {{ $products->total() }} data</div>
+            @endif
         </div>
-    </div>
-
-    {{-- Pagination --}}
-    <div class="mt-3">
-        {{ $products->links() }}
     </div>
 
     {{-- Reset Stock Confirmation Modal --}}

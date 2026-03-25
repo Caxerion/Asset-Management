@@ -6,6 +6,7 @@ use App\Models\Pickup;
 use App\Models\PickupLine;
 use App\Models\Product;
 use App\Models\Floor;
+use App\Models\Person;
 use App\Models\InventoryTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,22 @@ class PersediaanController extends Controller
 {
     // Menampilkan histori pengambilan barang dan stock barang (same page)
     public function index(Request $request)
-    {
-        // Pickups query
+    {   
+        // Get sorting parameters from combined field (e.g., id_desc, created_at_asc)
+        $sortOption = $request->get('sort', 'id_desc');
+        $sortParts = explode('_', $sortOption);
+        
+        // Last part is the direction, everything else is the field
+        $sortDirection = array_pop($sortParts);
+        $sortField = implode('_', $sortParts);
+        
+        if (!in_array($sortDirection, ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        // Products query
+        $productQuery = Product::with(['category', 'stockBalance']);
+        // Pickups query - ensure items relationship is always eager loaded with product
         $pickupQuery = Pickup::with(['user', 'floor', 'items.product']);
         
         // Search filter for histori pengambilan
@@ -29,7 +44,32 @@ class PersediaanController extends Controller
             });
         }
         
-        $pickups = $pickupQuery->latest()->paginate(10);
+        // Apply sorting - ensure sortField is allowed
+        $allowedSortFields = ['id', 'created_at', 'updated_at', 'requested_by', 'floor_id', 'items_count'];
+        if (!in_array($sortField, $allowedSortFields)) {
+            $sortField = 'id';
+        }
+        
+        // Handle sorting by user name (requires join or orderBy on relationship)
+        if ($sortField === 'requested_by') {
+            $pickups = $pickupQuery->select('pickups.*')
+                ->join('users', 'pickups.requested_by', '=', 'users.id')
+                ->orderBy('users.name', $sortDirection)
+                ->paginate(7);
+        } elseif ($sortField === 'floor_id') {
+            $pickups = $pickupQuery->select('pickups.*')
+                ->join('floors', 'pickups.floor_id', '=', 'floors.id')
+                ->orderBy('floors.name', $sortDirection)
+                ->paginate(7);
+        } elseif ($sortField === 'items_count') {
+            $pickups = $pickupQuery->select('pickups.*')
+                ->leftJoin('pickup_lines', 'pickups.id', '=', 'pickup_lines.pickup_id')
+                ->groupBy('pickups.id')
+                ->orderByRaw('COUNT(pickup_lines.id) ' . $sortDirection)
+                ->paginate(7);
+        } else {
+            $pickups = $pickupQuery->orderBy($sortField, $sortDirection)->paginate(7);
+        }
 
         // Products query
         $productQuery = Product::with(['category', 'stockBalance']);
@@ -41,15 +81,15 @@ class PersediaanController extends Controller
                   ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%$q%"));
         }
         
-        $products = $productQuery->paginate(6);
+        $products = $productQuery->paginate(7);
 
-        $users = \App\Models\User::all();
+        $users = Person::where('is_active', true)->get();
         $floors = Floor::all();
         
         // All products for the form in modal - eager load relationships and append stock_balance
         $allProducts = Product::with(['category', 'size', 'stockBalances'])->get();
 
-        return view('persediaan.index', compact('pickups', 'products', 'users', 'floors', 'allProducts'));
+        return view('persediaan.index', compact('pickups', 'products', 'users', 'floors', 'allProducts', 'sortField', 'sortDirection'));
     }
 
     // Form catat pengambilan barang
@@ -57,7 +97,7 @@ class PersediaanController extends Controller
     {
         $products   = Product::with(['category', 'size', 'stockBalances'])->get();
         $floors     = Floor::all();
-        $users      = \App\Models\User::all();
+        $users      = Person::where('is_active', true)->get();
         $categories = \App\Models\Category::all();
         $sizes      = \App\Models\Size::all();
 
@@ -72,7 +112,7 @@ class PersediaanController extends Controller
         
         $request->validate([
             'floor_id' => 'required|exists:floors,id',
-            'user_id'  => 'required|exists:users,id',
+            'user_id'  => 'required|exists:people,id',
             'items'    => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.qty'        => 'required|integer|min:1',

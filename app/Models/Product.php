@@ -14,6 +14,18 @@ class Product extends Model
         'unit', 'min_stock', 'is_active'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::deleting(function ($product) {
+            // Delete related stock balances
+            $product->stockBalances()->delete();
+            // Delete related inventory transactions
+            $product->inventoryTransactions()->delete();
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -34,10 +46,16 @@ class Product extends Model
         return $this->hasMany(StockBalance::class);
     }
 
-    // Accessor for stock_balance attribute used in views - shows total stock across all floors
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
+
+    // Accessor for stock_balance attribute used in views - shows total stock across all floors 1
     public function getStockBalanceAttribute()
     {
         // Get the sum of all stock balances for this product across all floors
-        return $this->stockBalances()->sum('qty_on_hand');
+        return (int) $this->stockBalances()->sum('qty_on_hand');
+
     }
 }

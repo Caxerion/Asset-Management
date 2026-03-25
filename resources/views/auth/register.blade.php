@@ -18,10 +18,10 @@
             <div class="card login-box">
 
                 <div class="center">
-                    <img src="{{ asset('images/RE.png') }}" height="50">
+                    <img src="{{ asset('assets/img/logo-RE.png') }}" height="50">
 
-                    <h5 class="login-title">Create Account 📝</h5>
-                    <p class="login-subtitle">Register to access Stock Barang & Obat</p>
+                    <h5 class="login-title">Buat Akun 📝</h5>
+                    <p class="login-subtitle" style="text-align: center;">Register to access Stock Barang & Obat</p>
                 </div>
 
                 @if ($errors->any())
@@ -67,9 +67,7 @@
                         <select name="role" required>
                             <option value="" disabled selected>Pilih Role</option>
                             <option value="admin">Administrator</option>
-                            <option value="peminjam">Peminjam</option>
                             <option value="read">Read Only</option>
-                            <option value="test">Test</option>
                         </select>
                         <label>Role</label>
                     </div>

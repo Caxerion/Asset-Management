@@ -1,6 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sortSelect');
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        // Sorting dropdown - automatic navigation on change
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('sort', sortValue);
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        // Search input - automatic filtering on type (debounced) 1
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchValue = this.value.toLowerCase();
+                
+                searchTimeout = setTimeout(function() {
+                    const rows = document.querySelectorAll('.histori-table tbody tr');
+                    rows.forEach(function(row) {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchValue) ? '' : 'none';
+                    });
+                }, 300);
+            });
+        }
+    });
+</script>
 <style>
     .table thead th {
         position: relative;
@@ -13,7 +46,29 @@
         top: 35%;
         height: 30%;
         width: 1px;
-        background-color: #dee2e6;
+        background-color: #b8b8b8;
+    }
+    
+    /* Remove vertical lines from tbody and make horizontal lines vibrant white */
+    .table tbody td {
+        border-left: none !important;
+        border-right: none !important;
+        border-top: 1px solid #b8b8b8 !important;
+        border-bottom: 1px solid #b8b8b8 !important;
+    }
+    .table thead th {
+        border-bottom: 2px solid #b8b8b8 !important;
+    }
+    .table tbody tr:not(:last-child) td {
+        border-bottom: 1px solid #b8b8b8 !important;
+    }
+    
+    /* Make histori table wider */
+    .table-responsive {
+        min-width: 100%;
+    }
+    .histori-table {
+        min-width: 1200px;
     }
     
     /* Label kecil untuk form */
@@ -102,8 +157,54 @@
         font-weight: 500;
     }
 </style>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Check for success message - Pencatatan Berhasil
+    @if(session('success') && str_contains(session('success'), 'dicatat'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Pencatatan Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for success message - Histori Terhapus
+    @if(session('success') && str_contains(session('success'), 'dihapus'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Histori Terhapus',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for success message - Histori direset
+    @if(session('success') && str_contains(session('success'), 'direset'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Histori Direset',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
+    // Check for error message
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Yah... Pencatatan Gagal! :(',
+            text: 'Ada produk terdaftar yang belum terisi stocknya',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+    
     let itemIndex = 0;
     const itemsBody = document.getElementById('modalItemsBody');
     const productSelect = document.getElementById('modalProductSelect');
@@ -295,86 +396,182 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<div class="container">
+<div class="container pt-3">
     {{-- Breadcrumb style header --}}
     <div class="mb-3">
-        <span class="text-muted fs-3">Persediaan /</span>
-        <h1 class="d-inline fs-3">Histori Pengambilan</h1>
+        <span class="text-muted fs-5"><i class="fa fa-clipboard-list" style="margin-right: 2px;"></i>Persediaan /</span>
+        <span class="text-muted d-inline fs-5"><i class="fa fa-link" style="margin-right: 2px;"></i>Histori Pengambilan</span>
     </div>
 
     {{-- Tab menu --}}
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" href="{{ route('persediaan.index') }}">Histori Pengambilan</a>
+            <a class="nav-link active" href="{{ route('persediaan.index') }}"><i class="fa fa-link" style="margin-right: 4px;"></i>Histori Pengambilan</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('stock.index') }}">Stock Barang</a>
+            <a class="nav-link" href="{{ route('stock.index') }}"><i class="fa fa-list" style="margin-right: 4px;"></i>Stock Barang</a>
         </li>
     </ul>
 
-    {{-- Search + tombol catat pengambilan --}}
-    <div class="d-flex justify-content-between mb-3">
-        <div class="col-md-4 ms-2">
-            <form method="GET" action="{{ route('persediaan.index') }}" class="d-flex gap-2">
-                <input type="text" name="q" placeholder="Cari..." 
-                       class="form-control form-control-sm" value="{{ request('q') }}">
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-                @if(request('q'))
-                    <a href="{{ route('persediaan.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
-                @endif
-            </form>
-        </div>
-        <div class="col-md-4 text-end me-2">
-            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#catatPengambilanModal">
-                <i class="fa fa-plus"></i> Catat Pengambilan
-            </button>
-            @if(Auth::user() && Auth::user()->hasRole('admin'))
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetHistoriModal">
-                    <i class="fa fa-trash"></i> Reset Histori
-                </button>
-            @endif
-        </div>
-    </div>
-
     {{-- Card with table --}}
     <div class="card">
-        <div class="card-header bg-white py-2">
-            <h6 class="mb-0">Data Histori Pengambilan</h6>
+        <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-2 align-items-center">
+                <input type="text" id="searchInput" placeholder="🔍 Cari Histori Pengambilan..." 
+                       class="form-control form-control-sm" style="width: 300px; border-radius: 10px;">
+                <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
+                    <option value="created_at_desc" {{ $sortField === 'created_at' && $sortDirection === 'desc' ? 'selected' : '' }}>Tanggal (Terbaru)</option>
+                    <option value="created_at_asc" {{ $sortField === 'created_at' && $sortDirection === 'asc' ? 'selected' : '' }}>Tanggal (Terlama)</option>
+                    <option value="items_count_desc" {{ $sortField === 'items_count' && $sortDirection === 'desc' ? 'selected' : '' }}>Jumlah Pickup (Banyak)</option>
+                    <option value="items_count_asc" {{ $sortField === 'items_count' && $sortDirection === 'asc' ? 'selected' : '' }}>Jumlah Pickup (Sedikit)</option>
+                </select>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#catatPengambilanModal" style="border-radius: 6px; padding-bottom:10px; padding-top:10px;">
+                    <i class="fa fa-plus"></i> Catat Pengambilan
+                </button>
+                @if(Auth::user() && Auth::user()->hasRole('admin'))
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetHistoriModal" style="padding: 10px;">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                @endif
+            </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-bordered table-striped mb-0" style="padding-top: 20px;">
+            <div class="table-responsive">
+            <table class="table table-bordered mb-0 histori-table" style="padding-top: 20px;">
                 <thead>
                     <tr class="no-border">
-                        <th style="width: 65px; vertical-align: middle;">#</th>
-                        <th style="width: 230px; vertical-align: middle; padding-left: 15px;">NAMA PENGAMBIL</th>
-                        <th style="vertical-align: middle; padding-left: 15px;">NAMA BARANG</th>
-                        <th style="width: 185px; vertical-align: middle; padding-left: 15px;">TANGGAL PENGAMBILAN</th>
-                        <th style="width: 155px; text-align: center; vertical-align: middle;">UNTUK LANTAI?</th>
-                        <th style="width: 110px; text-align: left; vertical-align: middle; padding-left: 15px;">LIHAT DETAIL</th>
+                        <th style="color: #0a5879; min-width: 80px; width: 80px; vertical-align: middle;  text-align: center; border-right: 1px solid #dee2e6 !important;">
+                        #
+                        </th>
+                        <th style="width: 230px; vertical-align: middle; padding-left: 15px; color: #373737;">
+                        NAMA PENGAMBIL</th>
+                        <th style="vertical-align: middle; padding-left: 20px; color: #373737;">
+                        LIST BARANG</th>
+                        <th style="width: 185px; vertical-align: middle; padding-left: 15px; color: #373737;">
+                        TANGGAL PENGAMBILAN</th>
+                        <th style="width: 155px; text-align: center; vertical-align: middle; color: #373737;">
+                        UNTUK LANTAI?</th>
+                        <th style="width: 110px; text-align: left; vertical-align: middle; padding-left: 15px; color: #373737;">LIHAT DETAIL</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($pickups as $pickup)
                         <tr>
-                            <td style="border-right: 0;">{{ $pickup->id }}</td>
-                            <td style="border-left: 0; border-right: 0;">{{ $pickup->user->name ?? 'N/A' }}</td>
-                            <td style="border-left: 0; border-right: 0;">
+                            <td style="border-right: 0; color: #0a5879; text-align: center;">{{ $pickup->id }}</td>
+                            <td style="border-left: 0; border-right: 0; ">{{ $pickup->user->name ?? 'N/A' }}</td>
+                            <td style="border-left: 0; border-right: 0; padding-left: 15px;">
                                 @php
-                                    $colors = ['primary','success','warning','danger','info'];
-                                    $items = $pickup->items;
-                                    $maxDisplay = 5;
+                                    // Map specific products to specific colors based on category
+                                    $productColors = [
+                                        // Produk Pembersih
+                                        'Handsoap' => '#0035b0',
+                                        'Floor Cleaner' => '#50ad8b',
+                                        'Glass Cleaner' => '#63b9db',
+                                        'Bowl Cleaner' => '#4e71db',
+                                        'Carpet Shampoo' => '#F4A460',
+                                        'Karbol' => '#228B22',
+                                        'Furniture Polish' => '#8B4513',
+                                        'Detergent' => '#b06767',
+                                        'Sunlight' => '#c1d76b',
+                                        'Bubuk Pembersih PIM B29' => '#59e892',
+                                        
+                                        // Pengharum & Pewangi
+                                        'Pengharum Ruangan (Stella/Glade)' => '#9090da',
+                                        'Bay Fresh' => '#FFDAB9',
+                                        'Stella Gantung' => '#DA70D6',
+                                        'Kamper Ball' => '#F5F5F5',
+                                        'Meta Chame' => '#BA55D3',
+                                        'Lemon Pladge' => '#FFF700',
+                                        
+                                        // Alat Kebersihan
+                                        'Bottle Sprayer' => '#7FFFD4',
+                                        'Tapas Hijau' => '#008000',
+                                        'Dustpan Kaleng' => '#708090',
+                                        'Dustpan' => '#FF4500',
+                                        'Window Washer 35cm' => '#1E90FF',
+                                        'Refill Window Washer 35cm' => '#ADD8E6',
+                                        'Window Squeege 35cm' => '#36454F',
+                                        'Refill Squeege 35cm' => '#2F4F4F',
+                                        'Pad Holder' => '#000000',
+                                        'Ragball' => '#F0E68C',
+                                        'Refill Loby Duster' => '#000080',
+                                        'Kain Mop Putih' => '#707658',
+                                        'Kain Mop Biru' => '#0000FF',
+                                        'Sikat Tangkai' => '#A52A2A',
+                                        'Kanebo' => '#FFFFE0',
+                                        'Sapu Nilon' => '#800080',
+                                        'Pad Merah' => '#FF0000',
+                                        'Pad Putih' => '#8a8ade',
+                                        
+                                        // Kain & Lap
+                                        'Lap Handuk Biru' => '#4682B4',
+                                        'Lap Handuk Merah' => '#DC143C',
+                                        'Lap Majun' => '#696969',
+                                        'Tissu Roll' => '#FFFFFF',
+                                        'Tissu Towel' => '#F5F5DC',
+                                        
+                                        // Perlengkapan Proteksi
+                                        'Sarung Tangan Karet' => '#FFD700',
+                                        'Jas Hujan' => '#FFFF00',
+                                        
+                                        // Peralatan & Lain-lain
+                                        'Wet Floor Sign' => '#FFA500',
+                                        'Batrai A2 Alkalin / ABC' => '#B8860B',
+                                        'Batu Apung' => '#C0C0C0',
+                                        
+                                        // Plastik & Kemasan
+                                        'Plastik Polibek Hitam 60x100' => '#1A1A1A',
+                                        'Plastik Polibek Hitam 90x120' => '#000000',
+                                    ];
+                                    
+                                    $items = collect($pickup->items ?? []);
+                                    
+                                    // Calculate total character length of all product names
+                                    $totalChars = $items->sum(function($item) {
+                                        $name = $item->product->name ?? 'Unknown';
+                                        return strlen($name) + strlen($item->qty) + 3; // +3 for " ()"
+                                    });
+                                    
+                                    // Show max 3 items, but show "view more" when:
+                                    // - Items count is 3-5 AND total character length > 80
+                                    $maxDisplay = 3;
                                     $displayItems = $items->take($maxDisplay);
                                     $remainingCount = $items->count() - $maxDisplay;
+                                    
+                                    // Show link if remaining items exist AND (3-5 items with long names OR more than 5 items)
+                                    $showViewMore = $remainingCount > 0 && ($items->count() >= 3 && $totalChars > 80 || $items->count() > 5);
                                 @endphp
-                                <div class="product-items-container">
+                                <div class="product-items-container" style="min-height: 60px; height: 60px; padding: 5px 0px; gap: 5px; display: flex; flex-wrap: wrap; align-items: flex-start;">
                                     @foreach($displayItems as $index => $item)
-                                        <span class="badge bg-{{ $colors[$index % count($colors)] }} product-item-badge">
-                                            {{ $item->product->name ?? 'N/A' }} ({{ $item->qty }})
+                                        @php
+                                            $productName = $item->product->name ?? 'Unknown';
+                                            $color = $productColors[$productName] ?? '#808080';
+                                            
+                                            // Convert hex to RGB
+                                            $hex = ltrim($color, '#');
+                                            $r = hexdec(substr($hex, 0, 2));
+                                            $g = hexdec(substr($hex, 2, 2));
+                                            $b = hexdec(substr($hex, 4, 2));
+                                            
+                                            // Vibrant transparent background (0.3 alpha for transparency)
+                                            $bgColor = "rgba({$r}, {$g}, {$b}, 0.35)";
+                                            
+                                            // Darker version for text (multiply RGB by 0.5 for darker shade
+                                            $darkR = max(0, intval($r * 0.5));
+                                            $darkG = max(0, intval($g * 0.5));
+                                            $darkB = max(0, intval($b * 0.5));
+                                            $textColor = "rgb({$darkR}, {$darkG}, {$darkB})";
+                                        @endphp
+                                        <span class="badge product-item-badge" style="background-color: {{ $bgColor }}; color: {{ $textColor }}; border: 1px solid {{ $textColor }};">
+                                           {{ $productName }} ({{ (int) $item->qty }})
                                         </span>
                                     @endforeach
-                                    @if($remainingCount > 0)
-                                        <a href="{{ route('persediaan.show', $pickup->id) }}" class="product-more-indicator" title="Lihat semua {{ $items->count() }} barang">
-
+                                    @if($showViewMore)
+                                      <a href="{{ route('persediaan.show', $pickup->id) }}" 
+   class="product-more-indicator" 
+   title="Lihat semua {{ $items->count() }} barang">
                                             +{{ $remainingCount }} lainnya...
                                         </a>
                                     @endif
@@ -396,12 +593,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 
     {{-- Pagination --}}
     <div class="mt-3">
-        {{ $pickups->links() }}
+        {{ $pickups->links('components.custom-pagination') }}
     </div>
 </div>
 
@@ -447,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="bg-primary text-white p-3 rounded" style="min-height: 100%;">
                         <h6 class="mb-0 fw-bold">INFORMASI</h6>
                         <p class="mb-0">Tanggal: {{ now()->translatedFormat('l, d M Y H:i') }}</p>
-                        <p class="mb-0">No Catatan: #{{ $pickup->id ?? 'XXXX' }}</p>
+                        <p class="mb-0">No Catatan: #{{ isset($pickup) ? $pickup->id : 'otomatis' }}</p>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -485,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         @foreach($allProducts as $product)
                             <option value="{{ $product->id }}" 
                                     data-size="{{ $product->size ?? '-' }}" 
-                                    data-stock="{{ $product->stock_balance }}">
+                                    data-stock="{{ (int) $product->stock_balance }}">
                                 {{ $product->name }} ({{ $product->category->name ?? '-' }})
                             </option>
                         @endforeach
@@ -504,7 +702,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="number" id="modalQtyInput" name="qty" class="form-control" min="1" value="1">
                 </div>
                 <div class="col-md-2">
-                    <button type="button" id="modalAddItemBtn" class="btn btn-success w-100">
+                    <button type="button" id="modalAddItemBtn" class="btn btn-primary w-100">
                         <i class="fa fa-plus"></i> Tambah Barang
                     </button>
                 </div>
@@ -684,4 +882,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </div> -->
 
 @endsection
+
 

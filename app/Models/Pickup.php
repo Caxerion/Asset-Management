@@ -13,7 +13,7 @@ class Pickup extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'requested_by');
+        return $this->belongsTo(Person::class, 'requested_by');
     }
 
     public function floor()
