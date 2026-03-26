@@ -12,25 +12,70 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 class User extends Authenticatable
 {
     use CanResetPassword;
+
+    /**
+     * The roles that belong to the user.
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('name', $role)->exists();
+    }
+
+    /**
+     * Assign a role to the user.
+     */
+    public function assignRole(string $role): void
+    {
+        $roleModel = Role::where('name', $role)->first();
+        if ($roleModel) {
+            $this->roles()->syncWithoutDetaching([$roleModel->id]);
+        }
+    }
+
+    /**
+     * Remove a role from the user.
+     */
+    public function removeRole(string $role): void
+    {
+        $this->roles()->where('name', $role)->delete();
+    }
+
+    /**
+     * Get all user roles as array of names.
+     */
+    public function getRoleNames(): array
+    {
+        return $this->roles()->pluck('name')->toArray();
+    }
+
     public function requestPengambilans()
-{
-    return $this->hasMany(RequestPengambilan::class);
-}
+    {
+        return $this->hasMany(RequestPengambilan::class);
+    }
 
-public function lantaisAsPIC()
-{
-    return $this->hasMany(Lantai::class, 'pic_user_id');
-}
+    public function lantaisAsPIC()
+    {
+        return $this->hasMany(Lantai::class, 'pic_user_id');
+    }
 
-public function createdItems()
-{
-    return $this->hasMany(Barang::class, 'created_by');
-}
+    public function createdItems()
+    {
+        return $this->hasMany(Barang::class, 'created_by');
+    }
 
-public function updatedItems()
-{
-    return $this->hasMany(Barang::class, 'updated_by');
-}
+    public function updatedItems()
+    {
+        return $this->hasMany(Barang::class, 'updated_by');
+    }
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
