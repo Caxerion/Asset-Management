@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .masterdata-table th {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table td {
+        border-left: none !important;
+        border-right: none !important;
+    }
+    .masterdata-table thead th {
+        border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table thead th:first-child {
+        border-left: none !important;
+    }
+    .masterdata-table thead th:last-child {
+        border-right: none !important;
+    }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sortSelect = document.getElementById('sortSelect');
@@ -40,12 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="card">
         <div class="card-body p-3">
-            <table class="table table-striped table-bordered">
+            <table class="table table-bordered masterdata-table">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama Kategori</th>
-                        <th>Status</th>
+                        <th>Jumlah Produk</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -54,13 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <tr>
                             <td>{{ $categories->firstItem() + $key }}</td>
                             <td>{{ $category->name }}</td>
-                            <td>
-                                @if($category->is_active)
-                                    <span class="badge bg-success">Aktif</span>
-                                @else
-                                    <span class="badge bg-secondary">Tidak Aktif</span>
-                                @endif
-                            </td>
+                            <td>{{ $category->products()->count() }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $category->id }}">
                                     <i class="fa fa-edit"></i> Edit

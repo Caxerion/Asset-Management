@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .masterdata-table th {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table td {
+        border-left: none !important;
+        border-right: none !important;
+    }
+    .masterdata-table thead th {
+        border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table thead th:first-child {
+        border-left: none !important;
+    }
+    .masterdata-table thead th:last-child {
+        border-right: none !important;
+    }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sortSelect = document.getElementById('sortSelect');
@@ -39,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     <div class="card">
         <div class="card-body p-3">
-            <table class="table table-striped table-bordered">
+            <table class="table table-bordered masterdata-table">
                 <thead>
                     <tr>
                         <th>No</th>

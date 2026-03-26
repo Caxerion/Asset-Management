@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .masterdata-table th {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table td {
+        border-left: none !important;
+        border-right: none !important;
+    }
+    .masterdata-table thead th {
+        border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table thead th:first-child {
+        border-left: none !important;
+    }
+    .masterdata-table thead th:last-child {
+        border-right: none !important;
+    }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sortSelect = document.getElementById('sortSelect');
@@ -46,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="card">
         <div class="card-body p-3">
-            <table class="table table-striped table-bordered">
+            <table class="table table-bordered masterdata-table">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -56,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <th>Ukuran</th>
                         <th>Unit</th>
                         <th>Min Stock</th>
-                        <th>Status</th>
+                        <th>Stock</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -70,15 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td>{{ $product->size->name ?? '-' }}</td>
                             <td>{{ $product->unit }}</td>
                             <td>{{ $product->min_stock }}</td>
+                            <td>{{ $product->stock_balance ?? 0 }}</td>
                             <td>
-                                @if($product->is_active)
-                                    <span class="badge bg-success">Aktif</span>
-                                @else
-                                    <span class="badge bg-secondary">Tidak Aktif</span>
-                                @endif
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $product->id }}">
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $product->id }}">
                                     <i class="fa fa-edit"></i> Edit
                                 </button>
                                 <form action="{{ route('masterdata.produk.destroy', $product->id) }}" method="POST" class="d-inline">

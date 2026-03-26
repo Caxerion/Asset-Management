@@ -1,12 +1,56 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .masterdata-table th {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table td {
+        border-left: none !important;
+        border-right: none !important;
+    }
+    .masterdata-table thead th {
+        border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
+    }
+    .masterdata-table thead th:first-child {
+        border-left: none !important;
+    }
+    .masterdata-table thead th:last-child {
+        border-right: none !important;
+    }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('sort', sortValue);
+            window.location.href = currentUrl.toString();
+        });
+    }
+});
+</script>
 <div class="container" style="margin-top: 40px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-tape" style="margin-right: 8px;"></i>Data Ukuran</h2>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fa fa-plus"></i> Tambah Ukuran
-        </button>
+        <div class="d-flex gap-2">
+            <select name="sort" id="sortSelect" class="form-select" style="width: 200px;">
+                <option value="default" {{ $sortField === 'default' ? 'selected' : '' }}>Default</option>
+                <option value="kg_desc" {{ $sortField === 'kg' && $sortDirection === 'desc' ? 'selected' : '' }}>kg</option>
+                <option value="g_desc" {{ $sortField === 'g' && $sortDirection === 'desc' ? 'selected' : '' }}>g</option>
+                <option value="ml_desc" {{ $sortField === 'ml' && $sortDirection === 'desc' ? 'selected' : '' }}>ml</option>
+                <option value="L_desc" {{ $sortField === 'L' && $sortDirection === 'desc' ? 'selected' : '' }}>L</option>
+                <option value="cm_desc" {{ $sortField === 'cm' && $sortDirection === 'desc' ? 'selected' : '' }}>cm</option>
+                <option value="inch_desc" {{ $sortField === 'inch' && $sortDirection === 'desc' ? 'selected' : '' }}>inch</option>
+                <option value="items_desc" {{ $sortField === 'items' && $sortDirection === 'desc' ? 'selected' : '' }}>items</option>
+            </select>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fa fa-plus"></i> Tambah Ukuran
+            </button>
+        </div>
     </div>
 
     @if (session('success'))
@@ -17,24 +61,10 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    {{-- Search Form --}}
-    <form method="GET" action="{{ route('masterdata.ukuran.index') }}" class="mb-4">
-        <div class="input-group" style="max-width: 400px;">
-            <input type="text" name="search" class="form-control" placeholder="Cari ukuran..." value="{{ request('search') }}">
-            <button type="submit" class="btn btn-primary">
-                Cari ukuran
-            </button>
-            @if(request('search'))
-                <a href="{{ route('masterdata.ukuran.index') }}" class="btn btn-secondary">
-                    Reset
-                </a>
-            @endif
-        </div>
-    </form>
 
     <div class="card">
         <div class="card-body p-3">
-            <table class="table table-striped table-bordered">
+            <table class="table table-bordered masterdata-table">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -50,7 +80,7 @@
                             <td>{{ $size->name }}</td>
                             <td>{{ $size->products()->count() }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $size->id }}">
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $size->id }}">
                                     <i class="fa fa-edit"></i> Edit
                                 </button>
                                 <form action="{{ route('masterdata.ukuran.destroy', $size->id) }}" method="POST" class="d-inline">
