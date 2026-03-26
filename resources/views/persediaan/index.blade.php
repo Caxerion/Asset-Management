@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sizeDisplay.textContent = product?.size?.name || '-';
             // Calculate stock from stockBalances relationship
             const stockBalances = product?.stock_balances || [];
-            const totalStock = stockBalances.reduce((sum, sb) => sum + (sb.qty_on_hand || 0), 0);
+            const totalStock = stockBalances.reduce((sum, sb) => sum + (parseInt(sb.qty_on_hand) || 0), 0);
             stockDisplay.textContent = totalStock;
         } else {
             sizeDisplay.textContent = '-';
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Calculate stock (AWAL = current stock)
         const stockBalances = product?.stock_balances || [];
-        const awalStock = stockBalances.reduce((sum, sb) => sum + (sb.qty_on_hand || 0), 0);
+        const awalStock = stockBalances.reduce((sum, sb) => sum + (parseInt(sb.qty_on_hand) || 0), 0);
         const akhirStock = awalStock - qty;
         
         // Add row to table
