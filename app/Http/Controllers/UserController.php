@@ -94,14 +94,14 @@ class UserController extends Controller
         // Generate token manually untuk ditampilkan di UI
         $user = User::where('email', $request->email)->first();
         $token = Password::getRepository()->create($user);
-
+        
         // Simpan token ke database
         DB::table('password_resets')->insert([
             'email' => $request->email,
             'token' => $token,
             'created_at' => now()
         ]);
-
+        
         // Buat reset URL
         $resetUrl = url('/password-reset/' . $token . '?email=' . urlencode($request->email));
 
