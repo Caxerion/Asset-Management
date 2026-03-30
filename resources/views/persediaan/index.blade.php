@@ -356,7 +356,7 @@
         font-size: 0.9rem;
     }
     
-    /* Modal title */
+    /* Modal title_ */
     .modal-form-title {
         font-weight: 600;
         font-size: 1.1rem;
