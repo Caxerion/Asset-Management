@@ -5,7 +5,198 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <style>
+    /* Enhanced Form Styling */
     .materialize-redesign { margin-top: 20px; }
+    
+    .form-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+        border: none;
+    }
+    
+    .form-card .card-content {
+        padding: 30px;
+    }
+    
+    .form-title {
+        text-align: center;
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        color: #1a237e !important;
+        margin-bottom: 25px !important;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e8eaf6;
+    }
+    
+    .info-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .info-section .row {
+        margin-bottom: 0;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: #fff;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-select:focus {
+        border-color: #3f51b5;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+    }
+    
+    .stock-display {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 12px 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 700;
+        color: #1565c0;
+        font-size: 16px;
+        border: 2px solid #90caf9;
+    }
+    
+    .qty-input {
+        text-align: center;
+        font-weight: 700;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .qty-input:focus {
+        border-color: #3f51b5;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+    }
+    
+    .product-selection-section {
+        background-color: #fff;
+        padding: 25px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .product-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .product-row > div {
+        flex: 1;
+        min-width: 180px;
+    }
+    
+    .vertical-divider {
+        width: 2px;
+        height: 55px;
+        background: linear-gradient(to bottom, #ccc, #eee, #ccc);
+        margin: 0 5px;
+    }
+    
+    .divider-line {
+        height: 2px;
+        background: linear-gradient(to right, transparent, #ddd, transparent);
+        margin: 25px 0;
+    }
+    
+    .btn-add {
+        background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-add:hover {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 14px 40px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #283593 0%, #1a237e 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+    }
+    
+    .table-container {
+        margin-top: 25px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .items-table {
+        margin-bottom: 0;
+    }
+    
+    .items-table th {
+        background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #616161;
+    }
+    
+    .notes-section {
+        margin-top: 25px;
+    }
+    
+    .notes-section textarea {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .notes-section textarea:focus {
+        border-color: #3f51b5;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+    }
     .materialize-redesign .card { border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important; }
     .materialize-redesign .card-title { margin-bottom: 20px; font-size: 24px !important; font-weight: bold !important; }
     .materialize-redesign .input-field label { font-size: 14px; }
@@ -122,7 +313,7 @@
     <div class="container">
         <div class="row">
             <div class="col s12 m10 offset-m1">
-                <div class="card">
+                <div class="card form-card">
                     <div class="card-content">
                         <!-- Title - Centered at top -->
                         <h5 class="form-title">Form Pengambilan Barang</h5>
@@ -135,7 +326,7 @@
                                 <div class="row" style="margin-bottom: 0;">
                                     <div class="col s12 m6">
                                         <label class="info-label">Pengambilan untuk siapa?</label>
-                                        <select name="user_id" id="user_id" class="browser-default" required>
+                                        <select name="user_id" id="user_id" class="form-select" required>
                                             <option value="" disabled selected>-- Pilih Pengguna --</option>
                                             @foreach($users as $user)
                                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -144,7 +335,7 @@
                                     </div>
                                     <div class="col s12 m6">
                                         <label class="info-label">Pengambilan untuk lantai?</label>
-                                        <select name="floor_id" id="floor_id" class="browser-default" required>
+                                        <select name="floor_id" id="floor_id" class="form-select" required>
                                             <option value="" disabled selected>-- Pilih Lantai --</option>
                                             @foreach($floors as $floor)
                                                 <option value="{{ $floor->id }}">{{ $floor->name }}</option>
@@ -163,12 +354,12 @@
                                     <!-- Cari & Pilih Barang -->
                                     <div style="flex: 2; min-width: 250px;">
                                         <label class="info-label">Cari & pilih barang</label>
-                                        <select name="product_id" id="productSelect" class="browser-default inline-select">
+                                        <select name="product_id" id="productSelect" class="form-select">
                                             <option value="" disabled selected>-- Pilih Barang --</option>
                                             @foreach($products as $product)
                                                 <option value="{{ $product->id }}" 
                                                         data-size="{{ $product->size->name ?? '-' }}"
-                                                        data-stock="{{ $product->stockBalances->sum('qty_on_hand') }}">
+                                                        data-stock="{{ (int) $product->stockBalances->sum('qty_on_hand') }}">
                                                     {{ $product->name }} ({{ $product->category->name ?? '-' }})
                                                 </option>
                                             @endforeach
@@ -199,7 +390,7 @@
                                     <!-- Tambah Barang Button -->
                                     <div>
                                         <label class="info-label">&nbsp;</label>
-                                        <button type="button" id="addItemBtn" class="btn waves-effect waves-light green" style="height: 42px; line-height: 42px;">
+                                        <button type="button" id="addItemBtn" class="btn waves-effect waves-light green btn-add">
                                             <i class="material-icons left">add</i> Tambah Barang
                                         </button>
                                     </div>
@@ -211,7 +402,7 @@
                             
                             <!-- Table of Added Items -->
                             <div class="table-container">
-                                <table class="highlight responsive-table" id="itemsTable">
+                                <table class="highlight responsive-table items-table" id="itemsTable">
                                     <thead>
                                         <tr>
                                             <th class="center-align">No</th>
@@ -314,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const product = products.find(p => p.id == productId);
         if (!product) return;
         
-        const stock = parseInt(product.stock_balances?.reduce((sum, sb) => sum + sb.qty_on_hand, 0) || 0);
+        const stock = parseInt(product.stock_balances?.reduce((sum, sb) => sum + parseInt(sb.qty_on_hand || 0), 0) || 0);
         
         // Check stock availability
         // Get existing qty for this product

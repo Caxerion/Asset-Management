@@ -1,6 +1,228 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    /* Modal Form Styling */
+    .modal-form-title {
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        color: #1a237e !important;
+    }
+    
+    .modal .modal-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-bottom: 2px solid #dee2e6;
+        padding: 20px 25px;
+    }
+    
+    .modal .modal-body {
+        padding: 25px;
+    }
+    
+    .modal .modal-footer {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-top: 2px solid #dee2e6;
+        padding: 15px 25px;
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        min-height: 100%;
+    }
+    
+    .info-box h6 {
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    
+    .modal-form-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+    
+    .modal .form-select,
+    .modal .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .modal .form-select:focus,
+    .modal .form-control:focus {
+        border-color: #3f51b5;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+    }
+    
+    /* Enhanced form controls - inline styling */
+    .modal .row.align-items-end .form-select,
+    .modal .row.align-items-end .form-control {
+        height: 42px;
+        font-size: 14px;
+    }
+    
+    .modal .form-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #5c6b7f;
+        margin-bottom: 6px;
+    }
+    
+    .modal .form-select-inline {
+        height: 42px;
+        border-radius: 6px;
+    }
+    
+    /* Fix select dropdown options display */
+    .modal .form-select-inline option,
+    .modal .form-select option {
+        padding: 10px 12px !important;
+        white-space: normal !important;
+        text-overflow: clip !important;
+        overflow: visible !important;
+        max-width: none !important;
+        width: 100%;
+    }
+    
+    /* Make select element show full text */
+    .modal .form-select-inline,
+    .modal .form-select {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    /* Fix for the select showing in a single line - increase height */
+    .modal .row.align-items-end .col-md-4 .form-select-inline {
+        min-width: 100%;
+        width: 100%;
+    }
+    
+    /* Outlined Select Style for Cari & Pilih Barang */
+    .modal .form-select-outlined {
+        background-color: transparent !important;
+        border: 2px solid #6c757d !important;
+        border-radius: 6px;
+        box-shadow: none !important;
+    }
+    
+    .modal .form-select-outlined:focus {
+        border-color: #3f51b5 !important;
+        background-color: transparent !important;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1) !important;
+    }
+    
+    .modal .form-select-outlined:hover {
+        border-color: #495057 !important;
+    }
+    
+    /* Notched Label Style */
+    .notched-select-wrapper {
+        position: relative;
+        display: block;
+    }
+    
+    .notched-label {
+        position: absolute;
+        top: -8px;
+        left: 12px;
+        background: white;
+        padding: 0 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #6c757d;
+        z-index: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .notched-select-wrapper .form-select-outlined {
+        margin-top: 0;
+    }
+    
+    /* Notched Input Style */
+    .notched-select-wrapper .form-select-outlined[type="number"] {
+        background-color: transparent !important;
+        border: 2px solid #6c757d !important;
+        border-radius: 6px;
+        height: 42px;
+    }
+    
+    .notched-select-wrapper .form-select-outlined[type="number"]:focus {
+        border-color: #3f51b5 !important;
+        background-color: transparent !important;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1) !important;
+        outline: none;
+    }
+    
+    /* Notched Plaintext Style */
+    .notched-select-wrapper .form-control-plaintext {
+        background-color: #f8f9fa !important;
+        border: 2px solid #6c757d !important;
+        border-radius: 6px;
+        height: 42px;
+    }
+    
+    .modal .form-control-plaintext {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-weight: 600;
+        color: #495057;
+        height: 42px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .stock-display {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        color: #1565c0;
+        border: 2px solid #90caf9;
+    }
+    
+    .modal .btn-primary {
+        background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    
+    .modal .btn-primary:hover {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    
+    .modal .btn-secondary {
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+    
+    .modal-items-table th {
+        background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        color: #616161;
+    }
+</style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sortSelect = document.getElementById('sortSelect');
@@ -134,7 +356,7 @@
         font-size: 0.9rem;
     }
     
-    /* Modal title */
+    /* Modal title_ */
     .modal-form-title {
         font-weight: 600;
         font-size: 1.1rem;
@@ -642,31 +864,35 @@ document.addEventListener('DOMContentLoaded', function() {
             {{-- Informasi + Dropdown --}}
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <div class="bg-primary text-white p-3 rounded" style="min-height: 100%;">
+                    <div class="info-box">
                         <h6 class="mb-0 fw-bold">INFORMASI</h6>
                         <p class="mb-0">Tanggal: {{ now()->translatedFormat('l, d M Y H:i') }}</p>
                         <p class="mb-0">No Catatan: #{{ isset($pickup) ? $pickup->id : 'otomatis' }}</p>
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="modalUserSelect" class="form-label">Pengambilan Untuk Siapa?</label>
-                            <select name="user_id" id="modalUserSelect" class="form-select form-select-sm" required>
-                                <option value="">-- Pilih Pengguna --</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="notched-select-wrapper">
+                                <span class="notched-label">Pengguna</span>
+                                <select name="user_id" id="modalUserSelect" class="form-select form-select-outlined" required>
+                                    <option value="">-</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="modalFloorSelect" class="form-label">Pengambilan Untuk Lantai?</label>
-                            <select name="floor_id" id="modalFloorSelect" class="form-select form-select-sm" required>
-                                <option value="">-- Pilih Lantai --</option>
-                                @foreach($floors as $floor)
-                                    <option value="{{ $floor->id }}">{{ $floor->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-md-6">
+                            <div class="notched-select-wrapper">
+                                <span class="notched-label">Lantai</span>
+                                <select name="floor_id" id="modalFloorSelect" class="form-select form-select-outlined" required>
+                                    <option value="">-</option>
+                                    @foreach($floors as $floor)
+                                        <option value="{{ $floor->id }}">{{ $floor->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -675,11 +901,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <hr>
 
             {{-- Pilih Barang --}}
-            <div class="row align-items-end mb-3">
+            <div class="row align-items-end mb-3 g-2">
                 <div class="col-md-4">
-                    <label for="modalProductSelect" class="form-label">Cari & Pilih Barang</label>
-                    <select name="product_id" id="modalProductSelect" class="form-select">
-                        <option value="">-- Pilih Barang --</option>
+                    <div class="notched-select-wrapper">
+                        <span class="notched-label">Cari & Pilih Barang</span>
+                        <select name="product_id" id="modalProductSelect" class="form-select form-select-inline form-select-outlined">
+                        <option value="">-</option>
                         @foreach($allProducts as $product)
                             <option value="{{ $product->id }}" 
                                     data-size="{{ $product->size ?? '-' }}" 
@@ -687,23 +914,30 @@ document.addEventListener('DOMContentLoaded', function() {
                                 {{ $product->name }} ({{ $product->category->name ?? '-' }})
                             </option>
                         @endforeach
-                    </select>
+                        </select>
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">Ukuran Barang</label>
-                    <div class="form-control-plaintext" id="modalSizeDisplay">-</div>
+                    <div class="notched-select-wrapper">
+                        <span class="notched-label">Ukuran</span>
+                        <div class="form-control-plaintext" id="modalSizeDisplay">-</div>
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label">Stock Tersedia</label>
-                    <div class="form-control-plaintext" id="modalStockDisplay">0</div>
+                    <div class="notched-select-wrapper">
+                        <span class="notched-label">Stock</span>
+                        <div class="form-control-plaintext" id="modalStockDisplay">0</div>
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <label for="modalQtyInput" class="form-label">Ambil Sebanyak</label>
-                    <input type="number" id="modalQtyInput" name="qty" class="form-control" min="1" value="1">
+                    <div class="notched-select-wrapper">
+                        <span class="notched-label">Jumlah</span>
+                        <input type="number" id="modalQtyInput" name="qty" class="form-control form-select-outlined" min="1" value="1">
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" id="modalAddItemBtn" class="btn btn-primary w-100">
-                        <i class="fa fa-plus"></i> Tambah Barang
+                    <button type="button" id="modalAddItemBtn" class="btn btn-primary btn-sm w-100 mt-3">
+                        <i class="fa fa-plus"></i> Tambah
                     </button>
                 </div>
             </div>
@@ -712,7 +946,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             {{-- Tabel Barang Ditambahkan --}}
             <div class="table-responsive">
-                <table class="table table-bordered" id="modalItemsTable">
+                <table class="table table-bordered modal-items-table" id="modalItemsTable">
                     <thead>
                         <tr>
                             <th style="width: 50px;">NO</th>
@@ -739,8 +973,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             {{-- Tombol --}}
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-success" id="submitPickupBtn" disabled>Proses Pengambilan Barang</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary" id="submitPickupBtn" disabled>Proses Pengambilan Barang</button>
             </div>
         </form>
       </div>
@@ -769,20 +1003,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 {{-- Right: Pengambilan fields --}}
                 <div class="col-md-9">
-                    <div class="row">
+                    <div class="row g-2">
                         <div class="col-md-6">
-                            <label class="info-label small">Pengambilan untuk siapa?</label>
-                            <select name="user_id" id="modalUserSelect" class="form-control form-control-sm" required>
-                                <option value="" disabled selected>-- Pilih Pengguna --</option>
+                            <label class="info-label small mb-1">Pengguna</label>
+                            <select name="user_id" id="modalUserSelect" class="form-select" required>
+                                <option value="">-- Pilih Pengguna --</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="info-label small">Pengambilan untuk lantai?</label>
-                            <select name="floor_id" id="modalFloorSelect" class="form-control form-control-sm" required>
-                                <option value="" disabled selected>-- Pilih Lantai --</option>
+                            <label class="info-label small mb-1">Lantai</label>
+                            <select name="floor_id" id="modalFloorSelect" class="form-select" required>
+                                <option value="">-- Pilih Lantai --</option>
                                 @foreach($floors as $floor)
                                     <option value="{{ $floor->id }}">{{ $floor->name }}</option>
                                 @endforeach
@@ -835,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     {{-- Tambah Barang Button --}}
                     <div>
                         <label class="info-label">&nbsp;</label>
-                        <button type="button" id="modalAddItemBtn" class="btn btn-success">
+                        <button type="button" id="modalAddItemBtn" class="btn btn-success btn-sm">
                             <i class="fa fa-plus"></i> Tambah Barang
                         </button>
                     </div>
@@ -882,5 +1116,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </div> -->
 
 @endsection
+
 
 
