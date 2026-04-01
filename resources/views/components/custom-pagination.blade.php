@@ -5,7 +5,13 @@
             @if ($paginator->onFirstPage())
                 <span class="page-link disabled">‹</span>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" class="page-link">‹</a>
+                @php
+                    $prevUrl = $paginator->previousPageUrl();
+                    if (request('search')) {
+                        $prevUrl .= (parse_url($prevUrl, PHP_URL_QUERY) ? '&' : '?') . 'search=' . request('search');
+                    }
+                @endphp
+                <a href="{{ $prevUrl }}" class="page-link">‹</a>
             @endif
 
             {{-- Pagination Elements (limited to 3 pages) --}}
@@ -13,6 +19,7 @@
                 $currentPage = $paginator->currentPage();
                 $lastPage = $paginator->lastPage();
                 $maxPagesToShow = 3;
+                $searchQuery = request('search', '');
                 
                 // Calculate the range of pages to show
                 $startPage = max(1, $currentPage - floor($maxPagesToShow / 2));
@@ -22,11 +29,19 @@
                 if ($endPage - $startPage + 1 < $maxPagesToShow) {
                     $startPage = max(1, $endPage - $maxPagesToShow + 1);
                 }
+                
+                function buildPageUrl($page, $search) {
+                    $url = '?page=' . $page;
+                    if ($search) {
+                        $url .= '&search=' . $search;
+                    }
+                    return $url;
+                }
             @endphp
             
             {{-- Show first page and ellipsis if needed --}}
             @if ($startPage > 1)
-                <a href="{{ $paginator->url(1) }}" class="page-link">1</a>
+                <a href="{{ buildPageUrl(1, $searchQuery) }}" class="page-link">1</a>
                 @if ($startPage > 2)
                     <span class="page-link dots">...</span>
                 @endif
@@ -37,7 +52,7 @@
                 @if ($i == $currentPage)
                     <span class="page-link active">{{ $i }}</span>
                 @else
-                    <a href="{{ $paginator->url($i) }}" class="page-link">{{ $i }}</a>
+                    <a href="{{ buildPageUrl($i, $searchQuery) }}" class="page-link">{{ $i }}</a>
                 @endif
             @endfor
             
@@ -46,12 +61,18 @@
                 @if ($endPage < $lastPage - 1)
                     <span class="page-link dots">...</span>
                 @endif
-                <a href="{{ $paginator->url($lastPage) }}" class="page-link">{{ $lastPage }}</a>
+                <a href="{{ buildPageUrl($lastPage, $searchQuery) }}" class="page-link">{{ $lastPage }}</a>
             @endif
 
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" class="page-link">›</a>
+                @php
+                    $nextUrl = $paginator->nextPageUrl();
+                    if (request('search')) {
+                        $nextUrl .= (parse_url($nextUrl, PHP_URL_QUERY) ? '&' : '?') . 'search=' . request('search');
+                    }
+                @endphp
+                <a href="{{ $nextUrl }}" class="page-link">›</a>
             @else
                 <span class="page-link disabled">›</span>
             @endif

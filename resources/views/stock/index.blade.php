@@ -4,32 +4,14 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sortSelect = document.getElementById('sortSelect');
-        const searchInput = document.getElementById('searchInput');
-        let searchTimeout;
 
-        // Sorting dropdown - automatic navigation on change 1
+        // Sorting dropdown - automatic navigation on change
         if (sortSelect) {
             sortSelect.addEventListener('change', function() {
                 const sortValue = this.value;
                 const currentUrl = new URL(window.location.href);
                 currentUrl.searchParams.set('sort', sortValue);
                 window.location.href = currentUrl.toString();
-            });
-        }
-
-        // Search input - automatic filtering on type (debounced)
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                const searchValue = this.value.toLowerCase();
-                
-                searchTimeout = setTimeout(function() {
-                    const rows = document.querySelectorAll('.stock-table tbody tr');
-                    rows.forEach(function(row) {
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchValue) ? '' : 'none';
-                    });
-                }, 300);
             });
         }
     });
@@ -122,8 +104,20 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
             <div class="d-flex gap-2 align-items-center">
                 <div class="input-group" style="width: 300px;">
-                    <input type="text" id="searchInput" placeholder="🔍 Cari Stock Barang..." 
-                    class="form-control form-control-sm border-start-0" style="border-radius: 0 10px 10px 0;">
+                    <form action="{{ route('stock.index') }}" method="GET" class="d-flex" style="width: 100%;">
+                        @if(request('sort'))
+                            <input type="hidden" name="sort" value="{{ request('sort') }}">
+                        @endif
+                        @if(request('size_id'))
+                            <input type="hidden" name="size_id" value="{{ request('size_id') }}">
+                        @endif
+                        <input type="text" name="search" id="searchInput" placeholder="Cari Stock Barang..." 
+                        value="{{ request('search') }}"
+                        class="form-control form-control-sm border-end-0" style="border-radius: 10px 0 0 10px;">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm" style="border-radius: 0 10px 10px 0; border-start: none;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
                 </div>
                 <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
                     <option value="id_asc" {{ $sortField === 'id' && $sortDirection === 'asc' ? 'selected' : '' }}>Default</option>

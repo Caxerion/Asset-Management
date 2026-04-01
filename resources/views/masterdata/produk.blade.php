@@ -37,9 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa fa-box" style="margin-right: 8px;"></i>Data Produk</h2>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
-            <i class="fa fa-plus"></i> Tambah Produk
-        </button>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fa fa-plus"></i> Tambah Produk
+            </button>
+        </div>
     </div>
 
     @if (session('success'))
@@ -133,12 +135,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 </select>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="size_id" class="form-label">Ukuran</label>
-                                                <select class="form-select" id="size_id" name="size_id" required>
+                                                <label for="size_ids" class="form-label">Ukuran (Pilih multiple)</label>
+                                                <select class="form-select" id="size_ids" name="size_ids[]" multiple required>
                                                     @foreach($sizes as $size)
-                                                        <option value="{{ $size->id }}" {{ $product->size_id == $size->id ? 'selected' : '' }}>{{ $size->name }}</option>
+                                                        <option value="{{ $size->id }}" {{ $product->sizes && in_array($size->id, $product->sizes->pluck('id')->toArray()) ? 'selected' : '' }}>{{ $size->name }}</option>
                                                     @endforeach
                                                 </select>
+                                                <small class="text-muted">Hold Ctrl/Cmd to memilih lebih dari satu</small>
                                             </div>
                                             <div class="mb-3">
                                                 <label for="unit" class="form-label">Unit</label>
@@ -206,14 +209,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="size_id" class="form-label">Ukuran</label>
-                        <select class="form-select @error('size_id') is-invalid @enderror" id="size_id" name="size_id" required>
-                            <option value="">Pilih Ukuran</option>
+                        <label for="size_ids" class="form-label">Ukuran (Pilih multiple)</label>
+                        <select class="form-select @error('size_ids') is-invalid @enderror" id="size_ids" name="size_ids[]" multiple required>
                             @foreach($sizes as $size)
                                 <option value="{{ $size->id }}">{{ $size->name }}</option>
                             @endforeach
                         </select>
-                        @error('size_id')
+                        <small class="text-muted">Hold Ctrl/Cmd to memilih lebih dari satu</small>
+                        @error('size_ids')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

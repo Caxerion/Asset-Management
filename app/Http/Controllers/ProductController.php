@@ -83,7 +83,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'category_id' => 'required|exists:categories,id',
-            'size_id' => 'required|exists:sizes,id',
+            'size_ids' => 'required|array|min:1',
+            'size_ids.*' => 'exists:sizes,id',
             'unit' => 'required',
             'min_stock' => 'numeric',
             'is_active' => 'boolean'
@@ -91,8 +92,19 @@ class ProductController extends Controller
 
         $validated['sku'] = $this->generateSKU();
         $validated['is_active'] = true;
+        
+        // Get the first size for backward compatibility (stored in size_id column)
+        $validated['size_id'] = $validated['size_ids'][0];
+        
+        // Remove size_ids from validated data before creating product
+        $sizeIds = $validated['size_ids'];
+        unset($validated['size_ids']);
 
         $product = Product::create($validated);
+        
+        // Attach sizes using many-to-many relationship
+        $product->sizes()->sync($sizeIds);
+        
         $page = session('produk_page', 1);
         return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil ditambahkan');
     }
@@ -106,13 +118,25 @@ class ProductController extends Controller
             'sku' => 'required',
             'name' => 'required',
             'category_id' => 'required|exists:categories,id',
-            'size_id' => 'required|exists:sizes,id',
+            'size_ids' => 'required|array|min:1',
+            'size_ids.*' => 'exists:sizes,id',
             'unit' => 'required',
             'min_stock' => 'numeric',
             'is_active' => 'boolean'
         ]);
 
+        // Get size_ids before updating
+        $sizeIds = $validated['size_ids'];
+        
+        // Update the first size for backward compatibility
+        $validated['size_id'] = $validated['size_ids'][0];
+        unset($validated['size_ids']);
+
         $product->update($validated);
+        
+        // Sync sizes using many-to-many relationship
+        $product->sizes()->sync($sizeIds);
+        
         $page = session('produk_page', 1);
         return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil diupdate');
     }
@@ -126,4 +150,6 @@ class ProductController extends Controller
         $page = session('produk_page', 1);
         return redirect()->route('masterdata.produk.index', ['page' => $page])->with('success', 'Produk berhasil dihapus');
     }
+
+
 }

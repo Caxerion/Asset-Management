@@ -390,7 +390,7 @@
                                     <!-- Tambah Barang Button -->
                                     <div>
                                         <label class="info-label">&nbsp;</label>
-                                        <button type="button" id="addItemBtn" class="btn waves-effect waves-light green btn-add">
+                                        <button type="button" id="addItemBtn" class="btn waves-effect waves-light blue btn-add" style="background-color: #0d6efd !important; color: white !important;">
                                             <i class="material-icons left">add</i> Tambah Barang
                                         </button>
                                     </div>
@@ -446,7 +446,7 @@
                                     </a>
                                 </div>
                                 <div>
-                                    <button type="submit" class="btn waves-effect waves-light blue darken-4" id="submitBtn" {{ $products->isEmpty() ? 'disabled' : '' }}>
+                                    <button type="submit" class="btn waves-effect waves-light blue darken-4" id="submitBtn" {{ $products->isEmpty() ? 'disabled' : '' }} style="background-color: #0d6efd !important; color: white !important;">
                                         <i class="material-icons left">save</i> Simpan
                                     </button>
                                 </div>

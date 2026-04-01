@@ -21,7 +21,7 @@ Route::get('/dashboard/pickups-by-period', [DashboardController::class, 'getPick
 Route::get('/dashboard/pickups-by-floor', [DashboardController::class, 'getPickupsByFloor']);
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 // Auth routes
@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/masterdata/produk/{product}', [ProductController::class, 'update'])->name('masterdata.produk.update');
         Route::delete('/masterdata/produk/{product}', [ProductController::class, 'destroy'])->name('masterdata.produk.destroy');
         
+
         // Person (Person) Routes
         Route::get('/person', [PersonController::class, 'index'])->name('person.index');
         Route::post('/person', [PersonController::class, 'store'])->name('person.store');

@@ -132,7 +132,17 @@ class SizeSeeder extends Seeder
     'updated_at' => now(),
 ],
 [
+    'name' => '20 cm',
+    'created_at' => now(),
+    'updated_at' => now(),
+],
+[
     'name' => '25 cm',
+    'created_at' => now(),
+    'updated_at' => now(),
+],
+[
+    'name' => '30 cm',
     'created_at' => now(),
     'updated_at' => now(),
 ],
@@ -163,6 +173,11 @@ class SizeSeeder extends Seeder
 ],
 [
     'name' => '40x60 cm',
+    'created_at' => now(),
+    'updated_at' => now(),
+],
+[
+    'name' => '10x15 cm',
     'created_at' => now(),
     'updated_at' => now(),
 ],

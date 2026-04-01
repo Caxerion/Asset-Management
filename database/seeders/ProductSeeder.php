@@ -71,7 +71,7 @@ class ProductSeeder extends Seeder
                 ['name' => 'Kanebo', 'unit' => 'pcs'],
                 ['name' => 'Sapu Nilon', 'unit' => 'pcs'],
                 ['name' => 'Pad Merah', 'unit' => 'pcs'],
-                ['name' => 'Pad Putih', 'unit' => 'pcs'],
+                ['name' => 'Pad Putih', 'unit' => 'pcs'],   
             ],
 
             // 🪣 Kain & Lap
