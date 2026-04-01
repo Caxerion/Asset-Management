@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\StockBalance;
 use App\Models\Floor;
+use App\Models\Size;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -13,6 +14,9 @@ class StockController extends Controller
     // Menampilkan daftar stok barang
     public function index(Request $request)
     {
+        // Get search query
+        $search = $request->get('search');
+        
         // Get sorting parameters from combined field (e.g., id_asc, stock_desc)
         $sortOption = $request->get('sort', 'id_asc');
         $sortParts = explode('_', $sortOption);
@@ -25,7 +29,27 @@ class StockController extends Controller
             $sortDirection = 'asc';
         }
 
-        $query = Product::with(['category', 'size', 'stockBalances']);
+        // Get selected size from request
+        $selectedSizeId = $request->get('size_id');
+
+        // Get all sizes for the dropdown
+        $sizes = Size::all();
+
+        // Build query
+        $query = Product::query()->with(['category', 'size', 'stockBalances', 'sizes']);
+
+        // Filter by size if selected
+        if ($selectedSizeId) {
+            $query->where('size_id', $selectedSizeId);
+        }
+
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhereHas('category', fn($c) => $c->where('name', 'like', '%' . $search . '%'));
+            });
+        }
 
         // Apply sorting
         if ($sortField === 'stock') {
@@ -40,11 +64,11 @@ class StockController extends Controller
         }
         
         // Get products with pagination (6 per page)
-        $products = $query->paginate(6);
+        $products = $query->paginate(6)->appends(request()->except('page'));
         
         $floors = Floor::all();
 
-        return view('stock.index', compact('products', 'floors', 'sortField', 'sortDirection'));
+        return view('stock.index', compact('products', 'floors', 'sortField', 'sortDirection', 'sizes', 'selectedSizeId', 'search'));
     }
 
     // Form tambah stok barang - redirect to stock index (view not implemented)

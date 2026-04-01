@@ -50,6 +50,12 @@ class Product extends Model
     {
         return $this->hasMany(InventoryTransaction::class);
     }
+    
+    // Many-to-many relationship with Size via pivot table
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_sizes');
+    }
 
     // Accessor for stock_balance attribute used in views - shows total stock across all floors 1
     public function getStockBalanceAttribute()

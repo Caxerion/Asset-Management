@@ -55,33 +55,33 @@ class PersediaanController extends Controller
             $pickups = $pickupQuery->select('pickups.*')
                 ->join('users', 'pickups.requested_by', '=', 'users.id')
                 ->orderBy('users.name', $sortDirection)
-                ->paginate(7);
+                ->paginate(7)->appends(request()->except('page'));
         } elseif ($sortField === 'floor_id') {
             $pickups = $pickupQuery->select('pickups.*')
                 ->join('floors', 'pickups.floor_id', '=', 'floors.id')
                 ->orderBy('floors.name', $sortDirection)
-                ->paginate(7);
+                ->paginate(7)->appends(request()->except('page'));
         } elseif ($sortField === 'items_count') {
             $pickups = $pickupQuery->select('pickups.*')
                 ->leftJoin('pickup_lines', 'pickups.id', '=', 'pickup_lines.pickup_id')
                 ->groupBy('pickups.id')
                 ->orderByRaw('COUNT(pickup_lines.id) ' . $sortDirection)
-                ->paginate(7);
+                ->paginate(7)->appends(request()->except('page'));
         } else {
-            $pickups = $pickupQuery->orderBy($sortField, $sortDirection)->paginate(7);
+            $pickups = $pickupQuery->orderBy($sortField, $sortDirection)->paginate(7)->appends(request()->except('page'));
         }
 
         // Products query
         $productQuery = Product::with(['category', 'stockBalance']);
         
-        // Search filter for stock
-        if ($request->q_stock) {
-            $q = $request->q_stock;
-            $productQuery->where('name', 'like', "%$q%")
-                  ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%$q%"));
+        // Search filter for stock - support both 'search' and 'q_stock' for backward compatibility
+        $searchQuery = $request->get('search') ?? $request->get('q_stock');
+        if ($searchQuery) {
+            $productQuery->where('name', 'like', "%$searchQuery%")
+                  ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%$searchQuery%"));
         }
         
-        $products = $productQuery->paginate(7);
+        $products = $productQuery->paginate(7)->appends(request()->except('page'));
 
         $users = Person::where('is_active', true)->get();
         $floors = Floor::all();

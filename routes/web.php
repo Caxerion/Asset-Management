@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/masterdata/produk/{product}', [ProductController::class, 'update'])->name('masterdata.produk.update');
         Route::delete('/masterdata/produk/{product}', [ProductController::class, 'destroy'])->name('masterdata.produk.destroy');
         
+
         // Person (Person) Routes
         Route::get('/person', [PersonController::class, 'index'])->name('person.index');
         Route::post('/person', [PersonController::class, 'store'])->name('person.store');

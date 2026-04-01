@@ -226,8 +226,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sortSelect = document.getElementById('sortSelect');
-        const searchInput = document.getElementById('searchInput');
-        let searchTimeout;
 
         // Sorting dropdown - automatic navigation on change
         if (sortSelect) {
@@ -236,22 +234,6 @@
                 const currentUrl = new URL(window.location.href);
                 currentUrl.searchParams.set('sort', sortValue);
                 window.location.href = currentUrl.toString();
-            });
-        }
-
-        // Search input - automatic filtering on type (debounced) 1
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                const searchValue = this.value.toLowerCase();
-                
-                searchTimeout = setTimeout(function() {
-                    const rows = document.querySelectorAll('.histori-table tbody tr');
-                    rows.forEach(function(row) {
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchValue) ? '' : 'none';
-                    });
-                }, 300);
             });
         }
     });
@@ -639,8 +621,14 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card">
         <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
             <div class="d-flex gap-2 align-items-center">
-                <input type="text" id="searchInput" placeholder="🔍 Cari Histori Pengambilan..." 
-                       class="form-control form-control-sm" style="width: 300px; border-radius: 10px;">
+                <form action="{{ route('persediaan.index') }}" method="GET" class="d-flex">
+                    @if(request('sort'))
+                        <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    @endif
+                    <input type="text" name="q" placeholder="🔍 Cari Histori Pengambilan..." 
+                           value="{{ request('q') }}"
+                           class="form-control form-control-sm" style="width: 300px; border-radius: 10px;">
+                </form>
                 <select name="sort" id="sortSelect" class="form-select form-select-sm" style="width: 200px; border-radius: 10px;">
                     <option value="created_at_desc" {{ $sortField === 'created_at' && $sortDirection === 'desc' ? 'selected' : '' }}>Tanggal (Terbaru)</option>
                     <option value="created_at_asc" {{ $sortField === 'created_at' && $sortDirection === 'asc' ? 'selected' : '' }}>Tanggal (Terlama)</option>
@@ -936,7 +924,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" id="modalAddItemBtn" class="btn btn-primary btn-sm w-100 mt-3">
+                    <button type="button" id="modalAddItemBtn" class="btn btn-primary btn-sm w-100 mt-3" style="background-color: #0d6efd !important; color: white !important;">
                         <i class="fa fa-plus"></i> Tambah
                     </button>
                 </div>
@@ -974,7 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {{-- Tombol --}}
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary" id="submitPickupBtn" disabled>Proses Pengambilan Barang</button>
+                <button type="submit" class="btn btn-primary" id="submitPickupBtn" disabled style="background-color: #0d6efd !important; color: white !important;">Proses Pengambilan Barang</button>
             </div>
         </form>
       </div>
@@ -1069,7 +1057,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     {{-- Tambah Barang Button --}}
                     <div>
                         <label class="info-label">&nbsp;</label>
-                        <button type="button" id="modalAddItemBtn" class="btn btn-success btn-sm">
+                        <button type="button" id="modalAddItemBtn" class="btn btn-primary btn-sm" style="background-color: #0d6efd !important; color: white !important;">
                             <i class="fa fa-plus"></i> Tambah Barang
                         </button>
                     </div>
@@ -1107,7 +1095,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {{-- Tombol --}}
             <div class="modal-footer mt-4">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-success">Proses Pengambilan Barang</button>
+                <button type="submit" class="btn btn-primary" style="background-color: #0d6efd !important; color: white !important;">Proses Pengambilan Barang</button>
             </div>
         </form>
       </div>

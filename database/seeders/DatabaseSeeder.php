@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             FloorSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
+            ProductSizeSeeder::class,
             RoleSeeder::class,
             StockBalanceSeeder::class,
             PersonSeeder::class,
