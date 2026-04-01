@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -52,15 +50,14 @@ class UserController extends Controller
             'role' => 'required|in:admin,peminjam,read,test',
         ]);
 
-        // Create user with role column
+        // Create user
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
         ]);
 
-        // Try to assign role via many-to-many (if role exists in roles table)
+        // Assign role
         $role = Role::where('name', $validated['role'])->first();
         if ($role) {
             $user->roles()->attach($role->id);
